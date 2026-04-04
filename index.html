@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Login — Dashboard Agência</title>
+<link rel="stylesheet" href="css/style.css" />
+<style>
+  body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: var(--bg);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Ambient background */
+  body::before {
+    content: '';
+    position: absolute;
+    top: -40%;
+    left: -20%;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(139,92,246,0.08) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  body::after {
+    content: '';
+    position: absolute;
+    bottom: -30%;
+    right: -15%;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(16,185,129,0.06) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+
+  .login-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-md);
+    border-radius: var(--radius-xl);
+    padding: 2.5rem 2.25rem;
+    width: 90%;
+    max-width: 400px;
+    position: relative;
+    z-index: 1;
+    box-shadow: var(--shadow);
+    animation: fadeUp 0.5s cubic-bezier(0.22,1,0.36,1) both;
+  }
+
+  .login-brand {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  .login-brand-logo {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  .login-brand-logo img {
+    height: 36px;
+    width: auto;
+    background: white;
+    border-radius: 8px;
+    padding: 4px 14px;
+    object-fit: contain;
+  }
+  .login-brand h1 {
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+  }
+  .login-brand p {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-top: 6px;
+  }
+
+  .login-footer {
+    text-align: center;
+    margin-top: 1.5rem;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  .form-error {
+    background: var(--red-bg);
+    color: var(--red);
+    font-size: 13px;
+    padding: 10px 14px;
+    border-radius: var(--radius-sm);
+    margin-bottom: 16px;
+    display: none;
+  }
+
+  .btn-login {
+    width: 100%;
+    justify-content: center;
+    padding: 12px;
+    font-size: 15px;
+  }
+</style>
+</head>
+<body>
+
+<div class="login-card">
+  <div class="login-brand">
+    <div class="login-brand-logo">
+      <img src="logo-agencia.png" alt="Momentum" />
+    </div>
+    <p>Gerencie os resultados dos nossos clientes</p>
+  </div>
+
+  <div class="form-error" id="formError"></div>
+
+  <div class="form-group">
+    <label class="form-label">E-mail</label>
+    <input type="email" class="form-input" id="loginEmail" placeholder="seu@email.com" />
+  </div>
+  <div class="form-group">
+    <label class="form-label">Senha</label>
+    <input type="password" class="form-input" id="loginPassword" placeholder="••••••••" />
+  </div>
+  <button class="btn btn-primary btn-login" onclick="handleLogin()" id="btnLogin">
+    Entrar
+  </button>
+
+  <div class="login-footer">
+    Momentum Digital &copy; 2026
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+  // ── SUPABASE INIT ──
+  var SB = window.supabase.createClient(
+    'https://mynolirdauvkubxvlddt.supabase.co',
+    'sb_publishable_LnvMZ7skiOJ1p6CALaqDiA_0AtUfOku'
+  );
+
+  // Se já logado, redireciona
+  (async () => {
+    try {
+      const { data: { user } } = await SB.auth.getUser();
+      if (user) window.location.href = 'admin.html';
+    } catch(e) {}
+  })();
+
+  function showError(msg) {
+    const el = document.getElementById('formError');
+    el.textContent = msg;
+    el.style.display = 'block';
+  }
+  function hideError() {
+    document.getElementById('formError').style.display = 'none';
+  }
+
+  function setLoading(btnId, loading) {
+    const btn = document.getElementById(btnId);
+    btn.disabled = loading;
+    btn.style.opacity = loading ? '0.6' : '1';
+  }
+
+  async function handleLogin() {
+    hideError();
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    if (!email || !password) return showError('Preencha todos os campos.');
+    setLoading('btnLogin', true);
+    try {
+      const { error } = await SB.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+      window.location.href = 'admin.html';
+    } catch (e) {
+      showError(e.message === 'Invalid login credentials'
+        ? 'E-mail ou senha incorretos.'
+        : e.message);
+    }
+    setLoading('btnLogin', false);
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Enter') handleLogin();
+  });
+</script>
+</body>
+</html>

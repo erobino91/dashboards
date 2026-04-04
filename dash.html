@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Dashboard de Resultados</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #F4F3F0; --surface: #ffffff; --border: rgba(0,0,0,0.06); --border-md: rgba(0,0,0,0.10);
+    --text: #18181B; --text-secondary: #52525B; --text-muted: #A1A1AA;
+    --green: #10B981; --purple: #8B5CF6; --red: #EF4444; --blue: #3B82F6; --amber: #F59E0B;
+    --green-bg: #ECFDF5; --purple-bg: #F5F3FF; --red-bg: #FEF2F2; --blue-bg: #EFF6FF; --amber-bg: #FFFBEB;
+    --radius-sm: 10px; --radius-md: 14px; --radius-lg: 20px;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.04); --shadow-md: 0 2px 8px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    --font: 'Plus Jakarta Sans', system-ui, sans-serif; --mono: 'JetBrains Mono', monospace;
+  }
+  body { font-family: var(--font); background: var(--bg); color: var(--text); min-height: 100vh; -webkit-font-smoothing: antialiased; }
+
+  @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+  @keyframes pulseGlow { 0%,100% { box-shadow:0 0 0 0 rgba(16,185,129,0.15); } 50% { box-shadow:0 0 0 8px rgba(16,185,129,0); } }
+  .animate-in { animation: fadeUp 0.5s cubic-bezier(0.22,1,0.36,1) both; }
+
+  #dashScreen { padding: 2rem 1.5rem 3rem; max-width: 1060px; margin: auto; }
+
+  /* Header */
+  .header { display:flex; flex-direction:column; gap:12px; margin-bottom:2rem; padding:1.25rem 1.5rem; background:var(--surface); border-radius:var(--radius-lg); border:1px solid var(--border); box-shadow:var(--shadow-sm); animation:fadeUp 0.4s cubic-bezier(0.22,1,0.36,1) both; }
+  .header-row-top { display:flex; align-items:center; gap:16px; }
+  .header-client { display:flex; align-items:center; gap:16px; }
+  .header-row-bottom { display:flex; align-items:center; gap:12px; }
+  .mobile-only { display:none !important; }
+  .desktop-only { display:flex; }
+  .logo-box { width:52px; height:52px; border-radius:var(--radius-sm); background:var(--bg); display:flex; align-items:center; justify-content:center; overflow:hidden; flex-shrink:0; border:1px solid var(--border-md); }
+  .logo-box img { width:100%; height:100%; object-fit:contain; }
+  .logo-box-agency { height:40px; padding:4px 12px; border-radius:var(--radius-sm); background:#ffffff; display:flex; align-items:center; justify-content:center; overflow:hidden; flex-shrink:0; border:1px solid var(--border-md); }
+  .logo-box-agency img { height:100%; width:auto; object-fit:contain; }
+  .divider-v { width:1px; height:32px; background:var(--border-md); flex-shrink:0; }
+  .client-name { font-size:18px; font-weight:700; letter-spacing:-0.02em; }
+  .period-txt { font-size:12px; color:var(--text-muted); margin-top:2px; font-weight:500; }
+  .spacer { flex:1; }
+  .period-select { font-family:var(--font); font-size:13px; font-weight:600; padding:8px 14px; border:1px solid var(--border-md); border-radius:var(--radius-sm); background:var(--surface); color:var(--text); outline:none; cursor:pointer; transition:all 0.2s; appearance:none; -webkit-appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2352525B' viewBox='0 0 16 16'%3E%3Cpath d='M4.646 6.646a.5.5 0 0 1 .708 0L8 9.293l2.646-2.647a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 10px center; padding-right:30px; }
+
+  /* Sections */
+  .sec-title { font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:1rem; padding-left:4px; display:flex; align-items:center; gap:8px; }
+  .sec-title::before { content:''; width:3px; height:14px; border-radius:2px; background:var(--purple); flex-shrink:0; }
+  .section { margin-bottom:2rem; }
+
+  /* Hero */
+  .hero-card { background:linear-gradient(135deg,#065F46 0%,#047857 40%,#059669 100%); border-radius:var(--radius-lg); padding:2rem 2.25rem; color:white; position:relative; overflow:hidden; box-shadow:0 4px 24px rgba(5,150,105,0.2); }
+  .hero-card::before { content:''; position:absolute; top:-50%; right:-20%; width:300px; height:300px; background:radial-gradient(circle,rgba(255,255,255,0.08) 0%,transparent 70%); border-radius:50%; }
+  .hero-label { font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:0.1em; opacity:0.75; margin-bottom:8px; }
+  .hero-val { font-family:var(--mono); font-size:36px; font-weight:500; letter-spacing:-0.03em; position:relative; z-index:1; }
+  .hero-period { font-size:13px; opacity:0.6; margin-top:6px; font-weight:500; position:relative; z-index:1; }
+
+  /* Grid & Cards */
+  .fat-chart-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px; }
+  .fat-chart-main { grid-column:1/-1; min-width:0; overflow:hidden; }
+  .fat-chart-pair { display:flex; flex-direction:column; gap:10px; min-width:0; overflow:hidden; }
+  .fat-card { background:var(--bg); border-radius:var(--radius-md); padding:1.25rem 1.5rem; min-width:0; overflow:hidden; transition:transform 0.2s; }
+  .fat-card:hover { transform:translateY(-1px); }
+  .fat-card.white { background:var(--surface); border:1px solid var(--border); }
+  .fat-card-label { font-size:12px; color:var(--text-muted); margin-bottom:6px; font-weight:600; text-transform:uppercase; letter-spacing:0.04em; }
+  .fat-card-val { font-family:var(--mono); font-size:24px; font-weight:500; letter-spacing:-0.02em; }
+
+  .cards2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .cards4 { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; }
+
+  .mcard { background:var(--bg); border-radius:var(--radius-sm); padding:1rem 1.125rem; transition:transform 0.2s; }
+  .mcard:hover { transform:translateY(-1px); }
+  .mcard-label { font-size:11px; color:var(--text-muted); margin-bottom:6px; font-weight:600; text-transform:uppercase; letter-spacing:0.04em; }
+  .mcard-val { font-family:var(--mono); font-size:19px; font-weight:500; }
+  .mcard-delta { font-size:11px; font-weight:600; margin-top:6px; display:flex; align-items:center; gap:4px; }
+  .mcard-delta.up { color:var(--green); }
+  .mcard-delta.down { color:var(--red); }
+  .mcard-delta.neutral { color:var(--text-muted); }
+
+  .subsection { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-md); padding:1.25rem 1.5rem; margin-bottom:10px; box-shadow:var(--shadow-sm); }
+  .subsection-title { font-size:14px; font-weight:700; margin-bottom:1rem; display:flex; align-items:center; gap:8px; }
+
+  .badge { display:inline-flex; font-size:10px; font-weight:700; padding:3px 10px; border-radius:20px; letter-spacing:0.03em; text-transform:uppercase; }
+  .badge.ifood { background:var(--red-bg); color:var(--red); }
+  .badge.meta { background:var(--purple-bg); color:var(--purple); }
+  .badge.google { background:var(--blue-bg); color:var(--blue); }
+  .badge.crm { background:var(--amber-bg); color:var(--amber); }
+
+  .chart-box { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-md); padding:1.25rem 1.5rem; box-shadow:var(--shadow-sm); min-width:0; overflow:hidden; }
+  .chart-box canvas { width:100% !important; max-width:100%; }
+  .chart-box-title { font-size:13px; font-weight:700; margin-bottom:1rem; color:var(--text-secondary); }
+
+  /* Funnel */
+  .funnel-wrap { display:flex; gap:8px; align-items:stretch; }
+  .fcard { flex:1; border-radius:var(--radius-sm); overflow:hidden; border:1px solid var(--border); display:flex; flex-direction:column; background:var(--surface); min-width:0; transition:transform 0.2s; }
+  .fcard:hover { transform:translateY(-2px); box-shadow:var(--shadow-md); }
+  .fcard-top { padding:12px 12px 10px; flex:1; }
+  .fcard-name { font-size:10px; color:var(--text-muted); margin-bottom:4px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; }
+  .fcard-num { font-family:var(--mono); font-size:18px; font-weight:500; line-height:1.2; }
+  .fcard-delta { display:flex; align-items:center; gap:4px; margin-top:8px; font-size:10px; font-weight:600; }
+  .fcard-delta.up { color:var(--green); }
+  .fcard-delta.down { color:var(--red); }
+  .fcard-bar-wrap { position:relative; height:56px; overflow:hidden; display:flex; align-items:flex-end; justify-content:center; padding-bottom:8px; }
+  .fcard-bar-wrap.cor-cp { background:linear-gradient(135deg,#7C3AED,#A78BFA); }
+  .fcard-bar-wrap.cor-if { background:linear-gradient(135deg,#DC2626,#F87171); }
+  .fcard-cover { position:absolute; top:0; left:0; width:100%; background:var(--surface); opacity:0.82; transition:height 0.6s cubic-bezier(0.22,1,0.36,1); }
+  .fcard-pct { font-family:var(--mono); font-size:12px; font-weight:600; color:#fff; position:relative; z-index:1; background:rgba(0,0,0,0.45); backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px); padding:2px 7px; border-radius:20px; }
+
+  .trafego-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px; }
+  .ticket-row { margin-top:10px; }
+
+  .status-bar { display:flex; align-items:center; margin-top:2rem; padding-top:1.25rem; border-top:1px solid var(--border); }
+  .status-text { font-size:12px; color:var(--text-muted); font-weight:500; display:flex; align-items:center; gap:6px; }
+  .status-dot { width:6px; height:6px; border-radius:50%; background:var(--green); animation:pulseGlow 2s infinite; }
+
+  /* Loading */
+  .dash-loading { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:60vh; gap:16px; color:var(--text-muted); }
+  .dash-loading .spinner { width:32px; height:32px; border:3px solid var(--border-md); border-top-color:var(--purple); border-radius:50%; animation:spin 0.6s linear infinite; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  .dash-error { text-align:center; padding:4rem 1.5rem; color:var(--text-muted); }
+  .dash-error h2 { font-size:20px; color:var(--text); margin-bottom:8px; }
+
+  /* Responsive */
+  @media (max-width:768px) {
+    .fat-chart-grid { grid-template-columns:1fr; }
+    .fat-chart-main { grid-column:auto; }
+    .fat-card-val { font-size:20px; }
+    .trafego-grid { grid-template-columns:1fr; }
+    .cards4 { grid-template-columns:1fr 1fr; }
+    .hero-val { font-size:28px; }
+    .chart-box canvas { height:auto !important; }
+  }
+  @media (max-width:480px) {
+    #dashScreen { padding:1rem 0.875rem 2rem; }
+    .header { gap:14px; padding:1rem; border-radius:var(--radius-md); }
+    .mobile-only { display:flex !important; }
+    .desktop-only { display:none !important; }
+    .divider-v { display:none; }
+    .spacer { display:none; }
+    .period-select { width:100%; }
+    .client-name { font-size:16px; }
+    .logo-box { width:44px; height:44px; }
+    .logo-box-agency.mobile-only { width:100%; justify-content:flex-start; padding:6px 12px; }
+    .fat-chart-grid { grid-template-columns:1fr; }
+    .fat-chart-main { grid-column:auto; }
+    .fat-card-val { font-size:18px; }
+    .cards2 { grid-template-columns:1fr; }
+    .cards4 { grid-template-columns:1fr 1fr; }
+    .funnel-wrap { flex-wrap:wrap; gap:8px; }
+    .fcard { min-width:calc(50% - 4px); flex:none; }
+    .mcard-val { font-size:16px; }
+    .fcard-num { font-size:16px; }
+    .trafego-grid { grid-template-columns:1fr; }
+    .hero-val { font-size:24px; }
+    .hero-card { padding:1.25rem 1.5rem; }
+    .chart-box { padding:0.875rem 1rem; }
+    .chart-box canvas { height:auto !important; }
+  }
+</style>
+</head>
+<body>
+
+<div id="loadingScreen" class="dash-loading">
+  <div class="spinner"></div>
+  <span>Carregando dashboard...</span>
+</div>
+
+<div id="errorScreen" class="dash-error" style="display:none">
+  <h2>Dashboard não encontrado</h2>
+  <p>Verifique o link e tente novamente.</p>
+</div>
+
+<div id="dashScreen" style="display:none">
+  <div class="header">
+    <div class="header-row-top">
+      <div class="header-client">
+        <div class="logo-box" id="dashLogoCliente"></div>
+        <div class="divider-v"></div>
+        <div>
+          <div class="client-name" id="dashNomeCliente">—</div>
+          <div class="period-txt" id="dashPeriodoTxt">—</div>
+        </div>
+      </div>
+      <div class="spacer"></div>
+      <div class="logo-box-agency desktop-only" id="dashLogoAgencia"></div>
+    </div>
+    <div class="header-row-bottom">
+      <div class="logo-box-agency mobile-only" id="dashLogoAgenciaMobile"></div>
+      <select class="period-select" id="periodSelect" onchange="onPeriodChange()"></select>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="hero-card animate-in" style="animation-delay:0.1s">
+      <div class="hero-label">Faturamento Total</div>
+      <div class="hero-val" id="fat_total">—</div>
+      <div class="hero-period" id="heroPeriod">—</div>
+    </div>
+  </div>
+
+  <div class="section animate-in" style="animation-delay:0.15s">
+    <div class="sec-title">Detalhamento de receita</div>
+    <div class="fat-chart-grid">
+      <div class="fat-chart-pair">
+        <div class="fat-card white"><div class="fat-card-label">Cardápio Próprio</div><div class="fat-card-val" id="fat_proprio">—</div></div>
+        <div class="chart-box"><div class="chart-box-title">Evolução — Cardápio Próprio</div><canvas id="chartProprio" height="120"></canvas></div>
+      </div>
+      <div class="fat-chart-pair">
+        <div class="fat-card white"><div class="fat-card-label">iFood</div><div class="fat-card-val" id="fat_ifood">—</div></div>
+        <div class="chart-box"><div class="chart-box-title">Evolução — iFood</div><canvas id="chartIfood" height="120"></canvas></div>
+      </div>
+      <div class="fat-chart-main">
+        <div class="chart-box"><div class="chart-box-title">Evolução — Faturamento Total</div><canvas id="chartTotal" height="90"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section animate-in" style="animation-delay:0.2s">
+    <div class="sec-title">Funis de conversão</div>
+    <div class="subsection">
+      <div class="subsection-title">Funil — Cardápio Próprio <span class="badge meta">Próprio</span></div>
+      <div class="funnel-wrap" id="funnel_cp"></div>
+      <div class="ticket-row"><div class="mcard" style="margin-top:10px"><div class="mcard-label">Ticket Médio — Cardápio Próprio</div><div class="mcard-val" id="ticket_cp">—</div><div class="mcard-delta" id="ticket_cp_delta"></div></div></div>
+    </div>
+    <div class="subsection">
+      <div class="subsection-title">Funil — iFood <span class="badge ifood">iFood</span></div>
+      <div class="funnel-wrap" id="funnel_if"></div>
+      <div class="ticket-row"><div class="mcard" style="margin-top:10px"><div class="mcard-label">Ticket Médio — iFood</div><div class="mcard-val" id="ticket_if">—</div><div class="mcard-delta" id="ticket_if_delta"></div></div></div>
+    </div>
+  </div>
+
+  <div class="section animate-in" style="animation-delay:0.25s">
+    <div class="sec-title">Resultados de tráfego</div>
+    <div class="trafego-grid">
+      <div class="subsection" style="margin-bottom:0"><div class="subsection-title">Meta Ads <span class="badge meta">Meta</span></div><div class="cards2"><div class="mcard"><div class="mcard-label">Valor Investido</div><div class="mcard-val" id="meta_invest">—</div></div><div class="mcard"><div class="mcard-label">Valor em Vendas</div><div class="mcard-val" id="meta_vendas">—</div></div></div></div>
+      <div class="subsection" style="margin-bottom:0"><div class="subsection-title">CRM — Disparos <span class="badge crm">CRM</span></div><div class="cards2"><div class="mcard"><div class="mcard-label">Total Investido</div><div class="mcard-val" id="crm_invest">—</div></div><div class="mcard"><div class="mcard-label">Valor em Vendas</div><div class="mcard-val" id="crm_vendas">—</div></div></div></div>
+    </div>
+    <div class="subsection">
+      <div class="subsection-title">Google Ads <span class="badge google">Google</span></div>
+      <div class="cards4"><div class="mcard"><div class="mcard-label">Valor Investido</div><div class="mcard-val" id="google_invest">—</div></div><div class="mcard"><div class="mcard-label">Valor em Vendas</div><div class="mcard-val" id="google_vendas">—</div></div><div class="mcard"><div class="mcard-label">Visitas à Loja</div><div class="mcard-val" id="local_visitas">—</div></div><div class="mcard"><div class="mcard-label">Obter Rota</div><div class="mcard-val" id="local_rota">—</div></div></div>
+    </div>
+  </div>
+
+  <div class="status-bar">
+    <span class="status-text"><span class="status-dot"></span> <span id="statusMsg">—</span></span>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+// ── SUPABASE (public access) ──
+const _sbDash = window.supabase;
+const sb = (typeof _sbDash.createClient === 'function')
+  ? _sbDash.createClient('https://mynolirdauvkubxvlddt.supabase.co', 'sb_publishable_LnvMZ7skiOJ1p6CALaqDiA_0AtUfOku')
+  : _sbDash.supabase.createClient('https://mynolirdauvkubxvlddt.supabase.co', 'sb_publishable_LnvMZ7skiOJ1p6CALaqDiA_0AtUfOku');
+
+const MESES = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+const FUNIL_LABELS = ['Visitas','Visualizações','Sacola','Revisão','Concluídos'];
+const FUNIL_CP_KEYS = ['cp_visitas','cp_views','cp_sacola','cp_revisao','cp_concluidos'];
+const FUNIL_IF_KEYS = ['if_visitas','if_views','if_sacola','if_revisao','if_concluidos'];
+
+let allRows = [];
+let idxSel = 0;
+let charts = {};
+
+function fmtBRL(n){ return 'R$ '+Number(n||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function fmtNum(n){ return Math.round(n||0).toLocaleString('pt-BR'); }
+function fmtData(d){
+  const dt = new Date(d+'T12:00:00');
+  return MESES[dt.getMonth()]+' de '+dt.getFullYear();
+}
+
+// ── INIT ──
+(async () => {
+  const slug = new URLSearchParams(window.location.search).get('c');
+  if (!slug) return showError();
+
+  // Fetch client
+  const { data: client, error: cErr } = await sb.from('clients').select('*').eq('slug', slug).eq('is_active', true).single();
+  if (cErr || !client) return showError();
+
+  // Fetch periods
+  const { data: periods, error: pErr } = await sb.from('periods').select('*').eq('client_id', client.id).order('period_date', { ascending: true });
+  if (pErr || !periods || periods.length === 0) return showError();
+
+  allRows = periods;
+  idxSel = allRows.length - 1;
+
+  // Set header
+  document.getElementById('dashNomeCliente').textContent = client.name;
+  const logoHtml = client.logo_url ? `<img src="${client.logo_url}" />` : '';
+  document.getElementById('dashLogoCliente').innerHTML = logoHtml;
+  const agencyHtml = '<img src="logo-agencia.png" />';
+  document.getElementById('dashLogoAgencia').innerHTML = agencyHtml;
+  document.getElementById('dashLogoAgenciaMobile').innerHTML = agencyHtml;
+
+  document.title = client.name + ' — Dashboard';
+
+  buildSelector();
+  renderAll();
+
+  document.getElementById('loadingScreen').style.display = 'none';
+  document.getElementById('dashScreen').style.display = 'block';
+})();
+
+function showError() {
+  document.getElementById('loadingScreen').style.display = 'none';
+  document.getElementById('errorScreen').style.display = 'block';
+}
+
+function buildSelector(){
+  const sel = document.getElementById('periodSelect');
+  sel.innerHTML = '';
+  allRows.forEach((d,i) => {
+    const opt = document.createElement('option');
+    opt.value = i;
+    opt.textContent = fmtData(d.period_date);
+    if (i === idxSel) opt.selected = true;
+    sel.appendChild(opt);
+  });
+}
+
+function onPeriodChange(){
+  idxSel = parseInt(document.getElementById('periodSelect').value);
+  renderAll();
+}
+
+function getWindow(idx){ return allRows.slice(Math.max(0,idx-3), idx+1); }
+
+function renderCharts(idx){
+  const win = getWindow(idx);
+  const labels = win.map(r => fmtData(r.period_date));
+  const totais = win.map(r => Number(r.fat_total)||0);
+  const proprios = win.map(r => Number(r.fat_proprio)||0);
+  const ifoods = win.map(r => Number(r.fat_ifood)||0);
+
+  const opts = () => ({
+    responsive:true, maintainAspectRatio:true,
+    plugins:{
+      legend:{display:false},
+      tooltip:{ backgroundColor:'#18181B', titleFont:{family:'Plus Jakarta Sans',size:12}, bodyFont:{family:'JetBrains Mono',size:12}, padding:12, cornerRadius:8, displayColors:false, callbacks:{ label:ctx=>'R$ '+ctx.parsed.y.toLocaleString('pt-BR',{minimumFractionDigits:2}) } }
+    },
+    scales:{
+      x:{ grid:{color:'rgba(0,0,0,0.04)'}, ticks:{color:'#A1A1AA',font:{family:'Plus Jakarta Sans',size:11,weight:'500'}} },
+      y:{ grid:{color:'rgba(0,0,0,0.04)'}, ticks:{color:'#A1A1AA',font:{family:'JetBrains Mono',size:11},callback:v=>'R$ '+v.toLocaleString('pt-BR')} }
+    },
+    elements:{ point:{radius:5,hoverRadius:8,borderWidth:2}, line:{tension:0.4,borderWidth:2.5} }
+  });
+
+  function setChart(id,data,color){
+    if(charts[id]){ charts[id].data.labels=labels; charts[id].data.datasets[0].data=data; charts[id].update(); return; }
+    const ctx=document.getElementById(id).getContext('2d');
+    const g=ctx.createLinearGradient(0,0,0,ctx.canvas.clientHeight);
+    g.addColorStop(0,color+'30'); g.addColorStop(1,color+'05');
+    charts[id]=new Chart(ctx,{type:'line',data:{labels,datasets:[{data,borderColor:color,borderWidth:2.5,backgroundColor:g,fill:true,pointBackgroundColor:'#fff',pointBorderColor:color,pointBorderWidth:2}]},options:opts()});
+  }
+  setChart('chartTotal',totais,'#10B981');
+  setChart('chartProprio',proprios,'#8B5CF6');
+  setChart('chartIfood',ifoods,'#EF4444');
+}
+
+function renderFunnel(keys, elId, corClass, curr, prev){
+  const wrap = document.getElementById(elId);
+  wrap.innerHTML = '';
+  const baseVal = Number(curr[keys[0]])||1;
+  keys.forEach((key,i) => {
+    const val = Number(curr[key])||0;
+    const prevVal = prev ? Number(prev[key])||0 : 0;
+    const pct = (val/baseVal*100);
+    const coverH = 100-pct;
+    let deltaHTML = '<div class="fcard-delta" style="color:var(--text-muted)">—</div>';
+    if(prev && prevVal > 0){
+      const diff = ((val-prevVal)/prevVal*100);
+      const sign = diff>=0?'+':'';
+      const cls = diff>=0?'up':'down';
+      const arrow = diff>=0?'↑':'↓';
+      deltaHTML = `<div class="fcard-delta ${cls}">${arrow} ${sign}${diff.toFixed(1).replace('.',',')}%</div>`;
+    }
+    const card = document.createElement('div');
+    card.className = 'fcard';
+    card.innerHTML = `<div class="fcard-top"><div class="fcard-name">${FUNIL_LABELS[i]}</div><div class="fcard-num">${fmtNum(val)}</div>${deltaHTML}</div><div class="fcard-bar-wrap ${corClass}"><div class="fcard-cover" style="height:${coverH.toFixed(2)}%"></div><div class="fcard-pct">${pct.toFixed(1).replace('.',',')}%</div></div>`;
+    wrap.appendChild(card);
+  });
+}
+
+function renderDelta(elId,curr,prev){
+  const el=document.getElementById(elId); if(!el) return;
+  if(prev>0){ const d=((curr-prev)/prev*100); const s=d>=0?'+':''; const a=d>=0?'↑':'↓'; el.className='mcard-delta '+(d>=0?'up':'down'); el.textContent=a+' '+s+d.toFixed(1).replace('.',',')+' % vs mês anterior'; }
+  else { el.className='mcard-delta neutral'; el.textContent='—'; }
+}
+
+function renderAll(){
+  const curr = allRows[idxSel];
+  const prev = idxSel>0 ? allRows[idxSel-1] : null;
+  const periodo = fmtData(curr.period_date);
+
+  document.getElementById('dashPeriodoTxt').textContent = periodo;
+  document.getElementById('heroPeriod').textContent = 'Resultado de '+periodo;
+  document.getElementById('fat_total').textContent = fmtBRL(curr.fat_total);
+  document.getElementById('fat_proprio').textContent = fmtBRL(curr.fat_proprio);
+  document.getElementById('fat_ifood').textContent = fmtBRL(curr.fat_ifood);
+  document.getElementById('meta_invest').textContent = fmtBRL(curr.meta_invest);
+  document.getElementById('meta_vendas').textContent = fmtBRL(curr.meta_vendas);
+  document.getElementById('crm_invest').textContent = fmtBRL(curr.crm_invest);
+  document.getElementById('crm_vendas').textContent = fmtBRL(curr.crm_vendas);
+  document.getElementById('google_invest').textContent = fmtBRL(curr.google_invest);
+  document.getElementById('google_vendas').textContent = fmtBRL(curr.google_vendas);
+  document.getElementById('local_visitas').textContent = fmtNum(curr.google_visitas_loja);
+  document.getElementById('local_rota').textContent = fmtNum(curr.google_rotas);
+
+  renderFunnel(FUNIL_CP_KEYS,'funnel_cp','cor-cp',curr,prev);
+  renderFunnel(FUNIL_IF_KEYS,'funnel_if','cor-if',curr,prev);
+  renderCharts(idxSel);
+
+  const tcC = curr.cp_concluidos>0 ? curr.fat_proprio/curr.cp_concluidos : 0;
+  const tiC = curr.if_concluidos>0 ? curr.fat_ifood/curr.if_concluidos : 0;
+  const tcP = prev && prev.cp_concluidos>0 ? prev.fat_proprio/prev.cp_concluidos : 0;
+  const tiP = prev && prev.if_concluidos>0 ? prev.fat_ifood/prev.if_concluidos : 0;
+
+  document.getElementById('ticket_cp').textContent = fmtBRL(tcC);
+  document.getElementById('ticket_if').textContent = fmtBRL(tiC);
+  renderDelta('ticket_cp_delta',tcC,tcP);
+  renderDelta('ticket_if_delta',tiC,tiP);
+
+  document.getElementById('statusMsg').textContent = 'Atualizado · '+periodo;
+}
+</script>
+</body>
+</html>

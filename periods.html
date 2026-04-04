@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Admin — Períodos</title>
+<link rel="stylesheet" href="css/style.css" />
+<style>
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-decoration: none;
+    margin-bottom: 1rem;
+    transition: color 0.2s;
+  }
+  .back-link:hover { color: var(--text); }
+
+  .client-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 0.5rem;
+  }
+  .client-header-logo {
+    width: 48px; height: 48px;
+    border-radius: var(--radius-sm);
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .client-header-logo img { width: 100%; height: 100%; object-fit: contain; }
+
+  .dash-link {
+    font-size: 12px;
+    color: var(--purple);
+    text-decoration: none;
+    font-family: var(--mono);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: opacity 0.2s;
+  }
+  .dash-link:hover { opacity: 0.7; }
+
+  /* ── FORM GRID for period ── */
+  .period-form-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  .period-form-section {
+    border-bottom: 1px solid var(--border);
+    padding: 1.25rem 0;
+  }
+  .period-form-section:last-child { border-bottom: none; }
+  .period-form-section-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .period-form-section-title::before {
+    content: '';
+    width: 3px;
+    height: 12px;
+    border-radius: 2px;
+    background: var(--purple);
+  }
+  .period-form-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+  }
+  .period-form-row .form-group { margin-bottom: 0; }
+  .form-input-num {
+    font-family: var(--mono);
+  }
+
+  /* ── Value indicators in table ── */
+  .val-money {
+    font-family: var(--mono);
+    font-size: 13px;
+  }
+  .val-money.green { color: var(--green); }
+
+  .period-date-cell {
+    font-weight: 600;
+    color: var(--text);
+  }
+</style>
+</head>
+<body>
+
+<!-- ── TOPBAR ── -->
+<div class="topbar">
+  <div class="topbar-brand">
+    <img src="logo-agencia.png" style="height:40px;width:auto;object-fit:contain;background:white;border-radius:6px;padding:4px 14px;" alt="Momentum" />
+    Dashboard de clientes
+  </div>
+  <div class="topbar-actions">
+    <span class="topbar-user" id="userName"></span>
+    <button class="btn-icon" onclick="SB.auth.signOut().then(function(){ window.location.href='index.html'; })" title="Sair">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+      </svg>
+    </button>
+  </div>
+</div>
+
+<!-- ── CONTENT ── -->
+<div class="container">
+  <a href="admin.html" class="back-link">
+    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <polyline points="15 18 9 12 15 6"/>
+    </svg>
+    Voltar aos clientes
+  </a>
+
+  <div class="page-header">
+    <div>
+      <div class="client-header" id="clientHeader">
+        <div class="loading-full" style="min-height:48px"><div class="spinner"></div></div>
+      </div>
+      <a href="#" class="dash-link" id="dashLink" target="_blank">
+        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+        </svg>
+        Ver dashboard público
+      </a>
+    </div>
+    <button class="btn btn-primary" onclick="openPeriodModal()">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+      </svg>
+      Novo período
+    </button>
+  </div>
+
+  <div id="periodsTable">
+    <div class="loading-full"><div class="spinner"></div></div>
+  </div>
+</div>
+
+<!-- ── MODAL: Criar/Editar período ── -->
+<div class="modal-overlay" id="periodModal" style="display:none">
+  <div class="modal" style="max-width:640px;">
+    <h2 class="modal-title" id="periodModalTitle">Novo período</h2>
+
+    <div class="period-form-grid">
+      <!-- Data -->
+      <div class="period-form-section" style="padding-top:0">
+        <div class="form-group">
+          <label class="form-label">Mês de referência</label>
+          <input type="month" class="form-input" id="pDate" />
+        </div>
+      </div>
+
+      <!-- Faturamento -->
+      <div class="period-form-section">
+        <div class="period-form-section-title">Faturamento</div>
+        <div class="period-form-row">
+          <div class="form-group">
+            <label class="form-label">Total</label>
+            <input type="text" inputmode="decimal" class="form-input form-input-num money-input" id="pFatTotal" placeholder="0,00" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Próprio</label>
+            <input type="text" inputmode="decimal" class="form-input form-input-num money-input" id="pFatProprio" placeholder="0,00" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">iFood</label>
+            <input type="text" inputmode="decimal" class="form-input form-input-num money-input" id="pFatIfood" placeholder="0,00" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Funil Próprio -->
+      <div class="period-form-section">
+        <div class="period-form-section-title">Funil — Cardápio Próprio</div>
+        <div class="period-form-row">
+          <div class="form-group"><label class="form-label">Visitas</label><input type="text" inputmode="numeric" class="form-input form-input-num int-input" id="pCpVisitas" placeholder="0" /></div>
+          <div class="form-group"><label class="form-label">Visualizações</label><input type="text" inputmode="numeric" class="form-input form-input-num int-input" id="pCpViews" placeholder="0" /></div>
+          <div class="form-group"><label class="form-label">Sacola</label><input type="text" inputmode="numeric" class="form-input form-input-num int-input" id="pCpSacola" placeholder="0" /></div>
+          <div class="form-group"><label class="form-label">Revisão</label><input type="text" inputmode="numeric" class="form-input form-input-num int-input" id="pCpRevisao" placeholder="0" /></div>
+          <div class="form-group"><label class="form-label">Concluídos</label><input type="text" inputmode="numeric" class="form-input form-input-num int-input" id="pCpConcluidos" placeholder="0" /></div>
+        </div>
+      </div>
+
+      <!-- Funil iFood -->
+      <div class="period-form-section">
+        <div class="period-form-section-title">Funil — iFood</div>
+        <div class="period-form-row">
+          <div class="form-group"><label class="form-label">Visitas</label><input type="text" inputmode="numeric" class="form-input form-input-num int-input" id="pIfVisitas" placeholder="0" /></div>
+          <div class="form-group"><label class="form-label">Visualizações</label><input type="text" inputmode="numeric" class="form-input form-input-num int-input" id="pIfViews" placeholder="0" /></div>
+          <div class="form-group"><label class="form-label">Sacola</label><input type="text" inputmode="numeric" class="form-input form-input-num int-input" id="pIfSacola" placeholder="0" /></div>
+          <div class="form-group"><label class="form-label">Revisão</label><input type="text" inputmode="numeric" class="form-input form-input-num int-input" id="pIfRevisao" placeholder="0" /></div>
+          <div class="form-group"><label class="form-label">Concluídos</label><input type="text" inputmode="numeric" class="form-input form-input-num int-input" id="pIfConcluidos" placeholder="0" /></div>
+        </div>
+      </div>
+
+      <!-- Tráfego -->
+      <div class="period-form-section">
+        <div class="period-form-section-title">Tráfego Pago</div>
+        <div class="period-form-row">
+          <div class="form-group"><label class="form-label">Meta — Investido</label><input type="text" inputmode="decimal" class="form-input form-input-num money-input" id="pMetaInvest" placeholder="0,00" /></div>
+          <div class="form-group"><label class="form-label">Meta — Vendas</label><input type="text" inputmode="decimal" class="form-input form-input-num money-input" id="pMetaVendas" placeholder="0,00" /></div>
+          <div class="form-group"><label class="form-label">Google — Investido</label><input type="text" inputmode="decimal" class="form-input form-input-num money-input" id="pGoogleInvest" placeholder="0,00" /></div>
+          <div class="form-group"><label class="form-label">Google — Vendas</label><input type="text" inputmode="decimal" class="form-input form-input-num money-input" id="pGoogleVendas" placeholder="0,00" /></div>
+        </div>
+        <div class="period-form-row" style="margin-top:12px">
+          <div class="form-group"><label class="form-label">Google — Visitas Loja</label><input type="text" inputmode="numeric" class="form-input form-input-num int-input" id="pGoogleVisitas" placeholder="0" /></div>
+          <div class="form-group"><label class="form-label">Google — Rotas</label><input type="text" inputmode="numeric" class="form-input form-input-num int-input" id="pGoogleRotas" placeholder="0" /></div>
+          <div class="form-group"><label class="form-label">CRM — Investido</label><input type="text" inputmode="decimal" class="form-input form-input-num money-input" id="pCrmInvest" placeholder="0,00" /></div>
+          <div class="form-group"><label class="form-label">CRM — Vendas</label><input type="text" inputmode="decimal" class="form-input form-input-num money-input" id="pCrmVendas" placeholder="0,00" /></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closePeriodModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="savePeriod()" id="btnSavePeriod">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── MODAL: Confirmar exclusão ── -->
+<div class="modal-overlay" id="deletePeriodModal" style="display:none">
+  <div class="modal" style="max-width:400px; text-align:center;">
+    <h2 class="modal-title" style="text-align:center;">Excluir período?</h2>
+    <p style="color: var(--text-secondary); font-size:14px; margin-bottom:1.5rem;">
+      Os dados deste mês serão excluídos permanentemente.
+    </p>
+    <div class="modal-actions" style="justify-content:center;">
+      <button class="btn btn-ghost" onclick="closeDeletePeriodModal()">Cancelar</button>
+      <button class="btn btn-danger" onclick="confirmDeletePeriod()" id="btnDeletePeriod">Excluir</button>
+    </div>
+  </div>
+</div>
+
+<div id="toastContainer"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+var SB = window.supabase.createClient(
+  'https://mynolirdauvkubxvlddt.supabase.co',
+  'sb_publishable_LnvMZ7skiOJ1p6CALaqDiA_0AtUfOku'
+);
+
+const MESES = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+const params = new URLSearchParams(window.location.search);
+const clientId = params.get('client');
+let client = null;
+let periods = [];
+let editingPeriodId = null;
+let deletingPeriodId = null;
+
+if (!clientId) window.location.href = 'admin.html';
+
+// ── PARSE numérico inteligente (aceita ponto e vírgula) ──
+function parseVal(str) {
+  if (!str) return 0;
+  var s = String(str).replace(/\s/g, '');
+  if (s.indexOf('.') !== -1 && s.indexOf(',') !== -1) {
+    // Tem os dois: BR 1.234,56 ou EN 1,234.56
+    if (s.lastIndexOf(',') > s.lastIndexOf('.')) {
+      s = s.replace(/\./g, '').replace(',', '.'); // BR
+    } else {
+      s = s.replace(/,/g, '');                   // EN
+    }
+  } else if (s.indexOf(',') !== -1) {
+    var parts = s.split(',');
+    if (parts[1] && parts[1].length <= 2) {
+      s = s.replace(',', '.');  // decimal: 35,46
+    } else {
+      s = s.replace(/,/g, ''); // milhar: 1,234
+    }
+  } else if (s.indexOf('.') !== -1) {
+    var parts = s.split('.');
+    // Múltiplos pontos ou último grupo tem 3 dígitos → milhar (ex: 2.074, 1.234.567)
+    if (parts.length > 2 || (parts.length === 2 && parts[1].length === 3)) {
+      s = s.replace(/\./g, '');
+    }
+    // senão: ponto decimal (ex: 35.46) → mantém
+  }
+  s = s.replace(/[^\d.\-]/g, '');
+  return parseFloat(s) || 0;
+}
+
+// ── Formatação monetária nos campos (ao sair do campo) ──
+function formatMoney(value) {
+  var n = parseVal(value);
+  if (n === 0 && !value) return '';
+  return n.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function formatInt(value) {
+  var n = Math.round(parseVal(value));
+  if (n === 0 && !value) return '';
+  return n.toLocaleString('pt-BR');
+}
+
+// ── ATM-style money input (da direita pra esquerda) ──
+function setupMoneyInput(input) {
+  var rawDigits = '';
+
+  function formatDigits(digits) {
+    if (!digits) return '';
+    var num = parseInt(digits, 10) / 100;
+    return num.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  function parsePasted(str) {
+    str = str.trim().replace(/\s/g, '');
+    if (!str) return null;
+    var hasDot = str.indexOf('.') !== -1;
+    var hasComma = str.indexOf(',') !== -1;
+    var num;
+    if (hasDot && hasComma) {
+      // Tem os dois: quem vier por último é o decimal
+      if (str.lastIndexOf(',') > str.lastIndexOf('.')) {
+        str = str.replace(/\./g, '').replace(',', '.'); // BR: 1.234,56
+      } else {
+        str = str.replace(/,/g, '');                   // EN: 1,234.56
+      }
+      num = parseFloat(str);
+    } else if (hasComma) {
+      var parts = str.split(',');
+      if (parts.length === 2 && parts[1].length <= 2) {
+        num = parseFloat(str.replace(',', '.'));        // decimal: 35,46
+      } else {
+        num = parseInt(str.replace(/,/g, ''), 10);     // milhar: 1,234 → inteiro
+      }
+    } else if (hasDot) {
+      var parts = str.split('.');
+      if (parts.length === 2 && parts[1].length <= 2) {
+        num = parseFloat(str);                          // decimal: 35.46
+      } else {
+        num = parseInt(str.replace(/\./g, ''), 10);    // milhar: 1.234 → inteiro
+      }
+    } else {
+      num = parseInt(str.replace(/[^\d]/g, ''), 10);   // sem separador → inteiro
+    }
+    return isNaN(num) ? null : num;
+  }
+
+  input.addEventListener('keydown', function(e) {
+    if (e.key === 'Backspace') {
+      e.preventDefault();
+      rawDigits = rawDigits.slice(0, -1);
+      this.value = formatDigits(rawDigits);
+    } else if (e.key >= '0' && e.key <= '9') {
+      e.preventDefault();
+      rawDigits += e.key;
+      this.value = formatDigits(rawDigits);
+    } else if (e.key === 'Delete') {
+      e.preventDefault();
+      rawDigits = '';
+      this.value = '';
+    }
+    // Tab, Enter, setas etc. passam normalmente
+  });
+
+  input.addEventListener('paste', function(e) {
+    e.preventDefault();
+    var pasted = (e.clipboardData || window.clipboardData).getData('text');
+    var num = parsePasted(pasted);
+    if (num !== null) {
+      rawDigits = Math.round(num * 100).toString();
+      this.value = formatDigits(rawDigits);
+    }
+  });
+
+  // Sincroniza rawDigits ao focar (para edição de valores já preenchidos)
+  input.addEventListener('focus', function() {
+    if (!this.value) { rawDigits = ''; return; }
+    var s = this.value.replace(/\./g, '').replace(',', '.');
+    var num = parseFloat(s);
+    rawDigits = isNaN(num) ? '' : Math.round(num * 100).toString();
+  });
+}
+
+// Aplicar formatação nos campos ao carregar
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.money-input').forEach(function(input) {
+    setupMoneyInput(input);
+  });
+  document.querySelectorAll('.int-input').forEach(function(input) {
+    input.addEventListener('blur', function() {
+      if (this.value) this.value = formatInt(this.value);
+    });
+  });
+});
+
+// ── FIELD MAP ──
+const FIELDS = {
+  pFatTotal: 'fat_total', pFatProprio: 'fat_proprio', pFatIfood: 'fat_ifood',
+  pCpVisitas: 'cp_visitas', pCpViews: 'cp_views', pCpSacola: 'cp_sacola',
+  pCpRevisao: 'cp_revisao', pCpConcluidos: 'cp_concluidos',
+  pIfVisitas: 'if_visitas', pIfViews: 'if_views', pIfSacola: 'if_sacola',
+  pIfRevisao: 'if_revisao', pIfConcluidos: 'if_concluidos',
+  pMetaInvest: 'meta_invest', pMetaVendas: 'meta_vendas',
+  pGoogleInvest: 'google_invest', pGoogleVendas: 'google_vendas',
+  pGoogleVisitas: 'google_visitas_loja', pGoogleRotas: 'google_rotas',
+  pCrmInvest: 'crm_invest', pCrmVendas: 'crm_vendas'
+};
+
+// ── INIT ──
+(async () => {
+  const { data: { user } } = await SB.auth.getUser();
+  if (!user) { window.location.href = 'index.html'; return; }
+
+  const { data: profile } = await SB.from('profiles').select('*').eq('id', user.id).single();
+  document.getElementById('userName').textContent = profile?.full_name || user.email;
+
+  // Load client
+  const { data: c, error } = await SB.from('clients').select('*').eq('id', clientId).single();
+  if (error || !c) { showToast('Cliente não encontrado.', 'error'); return; }
+  client = c;
+
+  document.getElementById('clientHeader').innerHTML = `
+    <div class="client-header-logo">
+      ${c.logo_url ? `<img src="${c.logo_url}" />` : ''}
+    </div>
+    <div>
+      <h1 class="page-title">${c.name}</h1>
+      <p class="page-subtitle">Dados mensais de desempenho</p>
+    </div>
+  `;
+  document.getElementById('dashLink').href = `dash.html?c=${c.slug}`;
+
+  loadPeriods();
+})();
+
+// ── LOAD ──
+async function loadPeriods() {
+  const { data, error } = await SB
+    .from('periods')
+    .select('*')
+    .eq('client_id', clientId)
+    .order('period_date', { ascending: false });
+
+  if (error) return showToast('Erro ao carregar períodos', 'error');
+  periods = data || [];
+  renderPeriods();
+}
+
+// ── RENDER ──
+function fmtMoney(n) {
+  return 'R$ ' + Number(n || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+}
+function fmtDate(d) {
+  const dt = new Date(d + 'T12:00:00');
+  return MESES[dt.getMonth()] + '/' + dt.getFullYear();
+}
+
+function renderPeriods() {
+  const el = document.getElementById('periodsTable');
+
+  if (periods.length === 0) {
+    el.innerHTML = `
+      <div class="card">
+        <div class="empty-state">
+          <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+            <path d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"/>
+          </svg>
+          <h3>Nenhum período cadastrado</h3>
+          <p>Adicione o primeiro mês de dados</p>
+        </div>
+      </div>`;
+    return;
+  }
+
+  el.innerHTML = `
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Período</th>
+            <th>Fat. Total</th>
+            <th>Próprio</th>
+            <th>iFood</th>
+            <th>Meta Ads</th>
+            <th>Google Ads</th>
+            <th style="width:90px"></th>
+          </tr>
+        </thead>
+        <tbody>
+          ${periods.map(p => `
+            <tr>
+              <td class="period-date-cell">${fmtDate(p.period_date)}</td>
+              <td><span class="val-money green">${fmtMoney(p.fat_total)}</span></td>
+              <td><span class="val-money">${fmtMoney(p.fat_proprio)}</span></td>
+              <td><span class="val-money">${fmtMoney(p.fat_ifood)}</span></td>
+              <td><span class="val-money">${fmtMoney(p.meta_vendas)}</span></td>
+              <td><span class="val-money">${fmtMoney(p.google_vendas)}</span></td>
+              <td>
+                <div style="display:flex; gap:4px; justify-content:flex-end;">
+                  <button class="btn-icon" onclick="editPeriod('${p.id}')" title="Editar">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                      <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
+                      <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                    </svg>
+                  </button>
+                  <button class="btn-icon" onclick="deletePeriod('${p.id}')" title="Excluir">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                      <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
+                    </svg>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+// ── MODAL ──
+function openPeriodModal() {
+  editingPeriodId = null;
+  document.getElementById('periodModalTitle').textContent = 'Novo período';
+  document.getElementById('pDate').value = '';
+  Object.keys(FIELDS).forEach(id => { document.getElementById(id).value = ''; });
+  document.getElementById('periodModal').style.display = 'flex';
+}
+
+function closePeriodModal() {
+  document.getElementById('periodModal').style.display = 'none';
+}
+
+function editPeriod(id) {
+  const p = periods.find(x => x.id === id);
+  if (!p) return;
+  editingPeriodId = id;
+  document.getElementById('periodModalTitle').textContent = 'Editar período';
+  document.getElementById('pDate').value = p.period_date.substring(0, 7); // yyyy-MM
+
+  // Campos monetários vs inteiros
+  var moneyFields = ['pFatTotal','pFatProprio','pFatIfood','pMetaInvest','pMetaVendas','pGoogleInvest','pGoogleVendas','pCrmInvest','pCrmVendas'];
+  Object.entries(FIELDS).forEach(([inputId, dbField]) => {
+    var val = p[dbField];
+    if (moneyFields.indexOf(inputId) !== -1) {
+      document.getElementById(inputId).value = val ? formatMoney(String(val)) : '';
+    } else {
+      document.getElementById(inputId).value = val ? formatInt(String(val)) : '';
+    }
+  });
+
+  document.getElementById('periodModal').style.display = 'flex';
+}
+
+// ── SAVE ──
+async function savePeriod() {
+  const dateVal = document.getElementById('pDate').value;
+  if (!dateVal) return showToast('Selecione o mês de referência.', 'error');
+
+  const btn = document.getElementById('btnSavePeriod');
+  btn.disabled = true;
+  btn.textContent = 'Salvando...';
+
+  const payload = {
+    client_id: clientId,
+    period_date: dateVal + '-01'
+  };
+
+  Object.entries(FIELDS).forEach(([inputId, dbField]) => {
+    payload[dbField] = parseVal(document.getElementById(inputId).value);
+  });
+
+  try {
+    if (editingPeriodId) {
+      const { error } = await SB.from('periods').update(payload).eq('id', editingPeriodId);
+      if (error) throw error;
+      showToast('Período atualizado!', 'success');
+    } else {
+      const { error } = await SB.from('periods').insert(payload);
+      if (error) {
+        if (error.message.includes('duplicate')) throw new Error('Já existe um período para este mês.');
+        throw error;
+      }
+      showToast('Período criado!', 'success');
+    }
+    closePeriodModal();
+    loadPeriods();
+  } catch (e) {
+    showToast(e.message, 'error');
+  }
+
+  btn.disabled = false;
+  btn.textContent = 'Salvar';
+}
+
+// ── DELETE ──
+function deletePeriod(id) {
+  deletingPeriodId = id;
+  document.getElementById('deletePeriodModal').style.display = 'flex';
+}
+
+function closeDeletePeriodModal() {
+  document.getElementById('deletePeriodModal').style.display = 'none';
+  deletingPeriodId = null;
+}
+
+async function confirmDeletePeriod() {
+  if (!deletingPeriodId) return;
+  const btn = document.getElementById('btnDeletePeriod');
+  btn.disabled = true;
+  btn.textContent = 'Excluindo...';
+
+  const { error } = await SB.from('periods').delete().eq('id', deletingPeriodId);
+  if (error) {
+    showToast('Erro ao excluir: ' + error.message, 'error');
+  } else {
+    showToast('Período excluído.', 'success');
+  }
+
+  closeDeletePeriodModal();
+  loadPeriods();
+  btn.disabled = false;
+  btn.textContent = 'Excluir';
+}
+
+// ── TOAST ──
+function showToast(msg, type) {
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.textContent = msg;
+  document.getElementById('toastContainer').appendChild(toast);
+  setTimeout(() => toast.remove(), 3500);
+}
+
+// Close modals on overlay click
+document.getElementById('periodModal').addEventListener('click', e => {
+  if (e.target === e.currentTarget) closePeriodModal();
+});
+document.getElementById('deletePeriodModal').addEventListener('click', e => {
+  if (e.target === e.currentTarget) closeDeletePeriodModal();
+});
+</script>
+</body>
+</html>
