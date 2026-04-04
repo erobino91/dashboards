@@ -218,7 +218,7 @@
   </div>
 
   <div class="section animate-in" style="animation-delay:0.18s">
-    <div class="sec-title">Pedidos — Cardápio Próprio</div>
+    <div class="sec-title">Pedidos — Visão Geral</div>
     <div class="trafego-grid">
       <div class="subsection" style="margin-bottom:0">
         <div class="subsection-title">Mesa</div>
@@ -390,7 +390,9 @@ function renderFunnel(keys, elId, corClass, curr, prev){
     const val = Number(curr[key])||0;
     const prevVal = prev ? Number(prev[key])||0 : 0;
     const pct = (val/baseVal*100);
-    const coverH = 100-pct;
+    const minVis = 30;
+    const visPct = minVis + (pct/100)*(100-minVis);
+    const coverH = 100-visPct;
     let deltaHTML = '<div class="fcard-delta" style="color:var(--text-muted)">—</div>';
     if(prev && prevVal > 0){
       const diff = ((val-prevVal)/prevVal*100);
