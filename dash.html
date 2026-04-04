@@ -195,6 +195,7 @@
     <div class="hero-card animate-in" style="animation-delay:0.1s">
       <div class="hero-label">Faturamento Total</div>
       <div class="hero-val" id="fat_total">—</div>
+      <div id="fat_total_delta" style="font-size:12px;font-weight:600;margin-top:8px;opacity:0.85;position:relative;z-index:1;"></div>
       <div class="hero-period" id="heroPeriod">—</div>
     </div>
   </div>
@@ -203,15 +204,37 @@
     <div class="sec-title">Detalhamento de receita</div>
     <div class="fat-chart-grid">
       <div class="fat-chart-pair">
-        <div class="fat-card white"><div class="fat-card-label">Cardápio Próprio</div><div class="fat-card-val" id="fat_proprio">—</div></div>
+        <div class="fat-card white"><div class="fat-card-label">Cardápio Próprio</div><div class="fat-card-val" id="fat_proprio">—</div><div class="mcard-delta" id="fat_proprio_delta"></div></div>
         <div class="chart-box"><div class="chart-box-title">Evolução — Cardápio Próprio</div><canvas id="chartProprio" height="120"></canvas></div>
       </div>
       <div class="fat-chart-pair">
-        <div class="fat-card white"><div class="fat-card-label">iFood</div><div class="fat-card-val" id="fat_ifood">—</div></div>
+        <div class="fat-card white"><div class="fat-card-label">iFood</div><div class="fat-card-val" id="fat_ifood">—</div><div class="mcard-delta" id="fat_ifood_delta"></div></div>
         <div class="chart-box"><div class="chart-box-title">Evolução — iFood</div><canvas id="chartIfood" height="120"></canvas></div>
       </div>
       <div class="fat-chart-main">
         <div class="chart-box"><div class="chart-box-title">Evolução — Faturamento Total</div><canvas id="chartTotal" height="90"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section animate-in" style="animation-delay:0.18s">
+    <div class="sec-title">Pedidos — Cardápio Próprio</div>
+    <div class="trafego-grid">
+      <div class="subsection" style="margin-bottom:0">
+        <div class="subsection-title">Mesa</div>
+        <div class="cards2">
+          <div class="mcard"><div class="mcard-label">Faturamento</div><div class="mcard-val" id="fat_mesa">—</div><div class="mcard-delta" id="fat_mesa_delta"></div></div>
+          <div class="mcard"><div class="mcard-label">Pedidos</div><div class="mcard-val" id="pedidos_mesa">—</div><div class="mcard-delta" id="pedidos_mesa_delta"></div></div>
+        </div>
+        <div class="mcard" style="margin-top:10px"><div class="mcard-label">Ticket Médio</div><div class="mcard-val" id="ticket_mesa">—</div><div class="mcard-delta" id="ticket_mesa_delta"></div></div>
+      </div>
+      <div class="subsection" style="margin-bottom:0">
+        <div class="subsection-title">Delivery Próprio</div>
+        <div class="cards2">
+          <div class="mcard"><div class="mcard-label">Faturamento</div><div class="mcard-val" id="fat_delivery">—</div><div class="mcard-delta" id="fat_delivery_delta"></div></div>
+          <div class="mcard"><div class="mcard-label">Pedidos</div><div class="mcard-val" id="pedidos_delivery">—</div><div class="mcard-delta" id="pedidos_delivery_delta"></div></div>
+        </div>
+        <div class="mcard" style="margin-top:10px"><div class="mcard-label">Ticket Médio</div><div class="mcard-val" id="ticket_delivery">—</div><div class="mcard-delta" id="ticket_delivery_delta"></div></div>
       </div>
     </div>
   </div>
@@ -221,7 +244,6 @@
     <div class="subsection">
       <div class="subsection-title">Funil — Cardápio Próprio <span class="badge meta">Próprio</span></div>
       <div class="funnel-wrap" id="funnel_cp"></div>
-      <div class="ticket-row"><div class="mcard" style="margin-top:10px"><div class="mcard-label">Ticket Médio — Cardápio Próprio</div><div class="mcard-val" id="ticket_cp">—</div><div class="mcard-delta" id="ticket_cp_delta"></div></div></div>
     </div>
     <div class="subsection">
       <div class="subsection-title">Funil — iFood <span class="badge ifood">iFood</span></div>
@@ -233,12 +255,12 @@
   <div class="section animate-in" style="animation-delay:0.25s">
     <div class="sec-title">Resultados de tráfego</div>
     <div class="trafego-grid">
-      <div class="subsection" style="margin-bottom:0"><div class="subsection-title">Meta Ads <span class="badge meta">Meta</span></div><div class="cards2"><div class="mcard"><div class="mcard-label">Valor Investido</div><div class="mcard-val" id="meta_invest">—</div></div><div class="mcard"><div class="mcard-label">Valor em Vendas</div><div class="mcard-val" id="meta_vendas">—</div></div></div></div>
-      <div class="subsection" style="margin-bottom:0"><div class="subsection-title">CRM — Disparos <span class="badge crm">CRM</span></div><div class="cards2"><div class="mcard"><div class="mcard-label">Total Investido</div><div class="mcard-val" id="crm_invest">—</div></div><div class="mcard"><div class="mcard-label">Valor em Vendas</div><div class="mcard-val" id="crm_vendas">—</div></div></div></div>
+      <div class="subsection" style="margin-bottom:0"><div class="subsection-title">Meta Ads <span class="badge meta">Meta</span></div><div class="cards2"><div class="mcard"><div class="mcard-label">Valor Investido</div><div class="mcard-val" id="meta_invest">—</div><div class="mcard-delta" id="meta_invest_delta"></div></div><div class="mcard"><div class="mcard-label">Valor em Vendas</div><div class="mcard-val" id="meta_vendas">—</div><div class="mcard-delta" id="meta_vendas_delta"></div></div></div></div>
+      <div class="subsection" style="margin-bottom:0"><div class="subsection-title">CRM — Disparos <span class="badge crm">CRM</span></div><div class="cards2"><div class="mcard"><div class="mcard-label">Total Investido</div><div class="mcard-val" id="crm_invest">—</div><div class="mcard-delta" id="crm_invest_delta"></div></div><div class="mcard"><div class="mcard-label">Valor em Vendas</div><div class="mcard-val" id="crm_vendas">—</div><div class="mcard-delta" id="crm_vendas_delta"></div></div></div></div>
     </div>
     <div class="subsection">
       <div class="subsection-title">Google Ads <span class="badge google">Google</span></div>
-      <div class="cards4"><div class="mcard"><div class="mcard-label">Valor Investido</div><div class="mcard-val" id="google_invest">—</div></div><div class="mcard"><div class="mcard-label">Valor em Vendas</div><div class="mcard-val" id="google_vendas">—</div></div><div class="mcard"><div class="mcard-label">Visitas à Loja</div><div class="mcard-val" id="local_visitas">—</div></div><div class="mcard"><div class="mcard-label">Obter Rota</div><div class="mcard-val" id="local_rota">—</div></div></div>
+      <div class="cards4"><div class="mcard"><div class="mcard-label">Valor Investido</div><div class="mcard-val" id="google_invest">—</div><div class="mcard-delta" id="google_invest_delta"></div></div><div class="mcard"><div class="mcard-label">Valor em Vendas</div><div class="mcard-val" id="google_vendas">—</div><div class="mcard-delta" id="google_vendas_delta"></div></div><div class="mcard"><div class="mcard-label">Visitas à Loja</div><div class="mcard-val" id="local_visitas">—</div><div class="mcard-delta" id="local_visitas_delta"></div></div><div class="mcard"><div class="mcard-label">Obter Rota</div><div class="mcard-val" id="local_rota">—</div><div class="mcard-delta" id="local_rota_delta"></div></div></div>
     </div>
   </div>
 
@@ -390,6 +412,12 @@ function renderDelta(elId,curr,prev){
   else { el.className='mcard-delta neutral'; el.textContent='—'; }
 }
 
+function renderDeltaHero(elId,curr,prev){
+  const el=document.getElementById(elId); if(!el) return;
+  if(prev>0){ const d=((curr-prev)/prev*100); const s=d>=0?'+':''; const a=d>=0?'↑':'↓'; el.style.color='rgba(255,255,255,0.9)'; el.textContent=a+' '+s+d.toFixed(1).replace('.',',')+' % vs mês anterior'; }
+  else { el.style.color='rgba(255,255,255,0.5)'; el.textContent='—'; }
+}
+
 function renderAll(){
   const curr = allRows[idxSel];
   const prev = idxSel>0 ? allRows[idxSel-1] : null;
@@ -409,18 +437,47 @@ function renderAll(){
   document.getElementById('local_visitas').textContent = fmtNum(curr.google_visitas_loja);
   document.getElementById('local_rota').textContent = fmtNum(curr.google_rotas);
 
+  renderDeltaHero('fat_total_delta', curr.fat_total, prev?.fat_total);
+  renderDelta('fat_proprio_delta',   curr.fat_proprio,  prev?.fat_proprio);
+  renderDelta('fat_ifood_delta',     curr.fat_ifood,    prev?.fat_ifood);
+  renderDelta('meta_invest_delta',   curr.meta_invest,  prev?.meta_invest);
+  renderDelta('meta_vendas_delta',   curr.meta_vendas,  prev?.meta_vendas);
+  renderDelta('crm_invest_delta',    curr.crm_invest,   prev?.crm_invest);
+  renderDelta('crm_vendas_delta',    curr.crm_vendas,   prev?.crm_vendas);
+  renderDelta('google_invest_delta', curr.google_invest,  prev?.google_invest);
+  renderDelta('google_vendas_delta', curr.google_vendas,  prev?.google_vendas);
+  renderDelta('local_visitas_delta', curr.google_visitas_loja, prev?.google_visitas_loja);
+  renderDelta('local_rota_delta',    curr.google_rotas,  prev?.google_rotas);
+
+  // Pedidos — Mesa & Delivery Próprio
+  document.getElementById('fat_mesa').textContent = fmtBRL(curr.fat_mesa);
+  document.getElementById('pedidos_mesa').textContent = fmtNum(curr.pedidos_mesa);
+  document.getElementById('fat_delivery').textContent = fmtBRL(curr.fat_delivery);
+  document.getElementById('pedidos_delivery').textContent = fmtNum(curr.pedidos_delivery);
+
+  renderDelta('fat_mesa_delta',      curr.fat_mesa,      prev?.fat_mesa);
+  renderDelta('pedidos_mesa_delta',  curr.pedidos_mesa,  prev?.pedidos_mesa);
+  renderDelta('fat_delivery_delta',      curr.fat_delivery,      prev?.fat_delivery);
+  renderDelta('pedidos_delivery_delta',  curr.pedidos_delivery,  prev?.pedidos_delivery);
+
+  const tmMesa     = curr.pedidos_mesa     > 0 ? curr.fat_mesa     / curr.pedidos_mesa     : 0;
+  const tmDelivery = curr.pedidos_delivery > 0 ? curr.fat_delivery / curr.pedidos_delivery : 0;
+  const tmMesaP    = prev && prev.pedidos_mesa     > 0 ? prev.fat_mesa     / prev.pedidos_mesa     : 0;
+  const tmDeliveryP= prev && prev.pedidos_delivery > 0 ? prev.fat_delivery / prev.pedidos_delivery : 0;
+
+  document.getElementById('ticket_mesa').textContent     = fmtBRL(tmMesa);
+  document.getElementById('ticket_delivery').textContent = fmtBRL(tmDelivery);
+  renderDelta('ticket_mesa_delta',     tmMesa,     tmMesaP);
+  renderDelta('ticket_delivery_delta', tmDelivery, tmDeliveryP);
+
   renderFunnel(FUNIL_CP_KEYS,'funnel_cp','cor-cp',curr,prev);
   renderFunnel(FUNIL_IF_KEYS,'funnel_if','cor-if',curr,prev);
   renderCharts(idxSel);
 
-  const tcC = curr.cp_concluidos>0 ? curr.fat_proprio/curr.cp_concluidos : 0;
   const tiC = curr.if_concluidos>0 ? curr.fat_ifood/curr.if_concluidos : 0;
-  const tcP = prev && prev.cp_concluidos>0 ? prev.fat_proprio/prev.cp_concluidos : 0;
   const tiP = prev && prev.if_concluidos>0 ? prev.fat_ifood/prev.if_concluidos : 0;
 
-  document.getElementById('ticket_cp').textContent = fmtBRL(tcC);
   document.getElementById('ticket_if').textContent = fmtBRL(tiC);
-  renderDelta('ticket_cp_delta',tcC,tcP);
   renderDelta('ticket_if_delta',tiC,tiP);
 
   document.getElementById('statusMsg').textContent = 'Atualizado · '+periodo;
