@@ -545,7 +545,7 @@ function renderAll(){
   const obsEl = document.getElementById('obsSection');
   const obsText = curr.obs_polished || curr.obs_raw || '';
   if (obsText) {
-    document.getElementById('obsContent').textContent = obsText;
+    document.getElementById('obsContent').innerHTML = obsText.replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>');
     obsEl.hidden = false;
   } else {
     obsEl.hidden = true;

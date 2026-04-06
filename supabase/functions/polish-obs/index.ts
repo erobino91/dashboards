@@ -103,10 +103,13 @@ REGRAS DE FORMATAÇÃO:
 - Cada tópico em uma linha separada com título em negrito: "emoji **Título**"
 - Abaixo do título, 1-2 frases curtas sobre aquele assunto
 - Tom amigável, celebratório nos acertos, construtivo nas quedas
-- Use os números reais e os deltas quando relevante (ex: "crescimento de 15%")
-- Contextualize os números com as observações da equipe
+- NÃO repita os números do dashboard — o cliente já vê os valores nas seções acima
+- Evite citar valores em R$ (o dashboard já mostra). Use apenas percentuais de variação quando necessário, e no máximo 1 por tópico
+- Agrupe assuntos relacionados em uma frase só (ex: "mesa e delivery tiveram ótimos crescimentos, de +13% e +23% respectivamente")
+- Foque na INTERPRETAÇÃO e no CONTEXTO, não na leitura dos dados
+- Priorize as observações da equipe — elas trazem o "porquê" por trás dos números
 - Não invente dados que não estejam nos números ou nas observações
-- Máximo 4-5 tópicos
+- Máximo 3-4 tópicos
 - Responda APENAS com o texto final, sem explicações ou introduções`;
 
     const response = await fetch(
