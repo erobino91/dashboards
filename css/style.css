@@ -78,7 +78,7 @@ body {
   background: var(--purple);
   color: white;
 }
-.btn-primary:hover { background: #7C3AED; transform: translateY(-1px); }
+.btn-primary:hover { background: #B82424; transform: translateY(-1px); }
 .btn-danger {
   background: var(--red-bg);
   color: var(--red);
@@ -128,7 +128,7 @@ body {
 }
 .form-input:focus, .form-select:focus {
   border-color: var(--border-focus);
-  box-shadow: 0 0 0 3px rgba(139,92,246,0.15);
+  box-shadow: 0 0 0 3px rgba(212,43,43,0.15);
 }
 .form-input::placeholder { color: var(--text-muted); }
 
@@ -373,7 +373,7 @@ body {
 .client-card:hover {
   border-color: var(--purple);
   transform: translateY(-2px);
-  box-shadow: 0 4px 20px rgba(139,92,246,0.1);
+  box-shadow: 0 4px 20px rgba(212,43,43,0.1);
 }
 .client-card-top {
   display: flex;

@@ -586,7 +586,7 @@ function editPeriod(id) {
   document.getElementById('pDate').value = p.period_date.substring(0, 7); // yyyy-MM
 
   // Campos monetários vs inteiros
-  var moneyFields = ['pFatTotal','pFatProprio','pFatIfood','pMetaInvest','pMetaVendas','pGoogleInvest','pGoogleVendas','pCrmInvest','pCrmVendas'];
+  var moneyFields = ['pFatTotal','pFatProprio','pFatIfood','pFatMesa','pFatDelivery','pMetaInvest','pMetaVendas','pGoogleInvest','pGoogleVendas','pCrmInvest','pCrmVendas'];
   Object.entries(FIELDS).forEach(([inputId, dbField]) => {
     var val = p[dbField];
     if (moneyFields.indexOf(inputId) !== -1) {
