@@ -168,33 +168,21 @@
         </div>
       </div>
 
-      <!-- Faturamento -->
+      <!-- Mesa & Salão -->
       <div class="period-form-section">
-        <div class="period-form-section-title">Faturamento</div>
+        <div class="period-form-section-title">Mesa & Salão</div>
         <div class="period-form-row">
-          <div class="form-group">
-            <label class="form-label">Total</label>
-            <input type="text" inputmode="decimal" class="form-input form-input-num money-input" id="pFatTotal" placeholder="0,00" />
-          </div>
-          <div class="form-group">
-            <label class="form-label">Próprio</label>
-            <input type="text" inputmode="decimal" class="form-input form-input-num money-input" id="pFatProprio" placeholder="0,00" />
-          </div>
-          <div class="form-group">
-            <label class="form-label">iFood</label>
-            <input type="text" inputmode="decimal" class="form-input form-input-num money-input" id="pFatIfood" placeholder="0,00" />
-          </div>
+          <div class="form-group"><label class="form-label">Faturamento</label><input type="text" inputmode="decimal" class="form-input form-input-num money-input" id="pFatMesa" placeholder="0,00" /></div>
+          <div class="form-group"><label class="form-label">Pedidos</label><input type="text" inputmode="numeric" class="form-input form-input-num int-input" id="pPedidosMesa" placeholder="0" /></div>
         </div>
       </div>
 
-      <!-- Mesa & Delivery Próprio -->
+      <!-- Delivery Próprio -->
       <div class="period-form-section">
-        <div class="period-form-section-title">Mesa & Delivery Próprio</div>
+        <div class="period-form-section-title">Delivery Próprio</div>
         <div class="period-form-row">
-          <div class="form-group"><label class="form-label">Fat. Mesa</label><input type="text" inputmode="decimal" class="form-input form-input-num money-input" id="pFatMesa" placeholder="0,00" /></div>
-          <div class="form-group"><label class="form-label">Pedidos Mesa</label><input type="text" inputmode="numeric" class="form-input form-input-num int-input" id="pPedidosMesa" placeholder="0" /></div>
-          <div class="form-group"><label class="form-label">Fat. Delivery</label><input type="text" inputmode="decimal" class="form-input form-input-num money-input" id="pFatDelivery" placeholder="0,00" /></div>
-          <div class="form-group"><label class="form-label">Pedidos Delivery</label><input type="text" inputmode="numeric" class="form-input form-input-num int-input" id="pPedidosDelivery" placeholder="0" /></div>
+          <div class="form-group"><label class="form-label">Faturamento</label><input type="text" inputmode="decimal" class="form-input form-input-num money-input" id="pFatDelivery" placeholder="0,00" /></div>
+          <div class="form-group"><label class="form-label">Pedidos</label><input type="text" inputmode="numeric" class="form-input form-input-num int-input" id="pPedidosDelivery" placeholder="0" /></div>
         </div>
       </div>
 
@@ -210,15 +198,18 @@
         </div>
       </div>
 
-      <!-- Funil iFood -->
+      <!-- iFood -->
       <div class="period-form-section">
-        <div class="period-form-section-title">Funil — iFood</div>
+        <div class="period-form-section-title">iFood</div>
         <div class="period-form-row">
+          <div class="form-group"><label class="form-label">Faturamento</label><input type="text" inputmode="decimal" class="form-input form-input-num money-input" id="pFatIfood" placeholder="0,00" /></div>
+        </div>
+        <div class="period-form-row" style="margin-top:12px">
           <div class="form-group"><label class="form-label">Visitas</label><input type="text" inputmode="numeric" class="form-input form-input-num int-input" id="pIfVisitas" placeholder="0" /></div>
           <div class="form-group"><label class="form-label">Visualizações</label><input type="text" inputmode="numeric" class="form-input form-input-num int-input" id="pIfViews" placeholder="0" /></div>
           <div class="form-group"><label class="form-label">Sacola</label><input type="text" inputmode="numeric" class="form-input form-input-num int-input" id="pIfSacola" placeholder="0" /></div>
           <div class="form-group"><label class="form-label">Revisão</label><input type="text" inputmode="numeric" class="form-input form-input-num int-input" id="pIfRevisao" placeholder="0" /></div>
-          <div class="form-group"><label class="form-label">Concluídos</label><input type="text" inputmode="numeric" class="form-input form-input-num int-input" id="pIfConcluidos" placeholder="0" /></div>
+          <div class="form-group"><label class="form-label">Pedidos</label><input type="text" inputmode="numeric" class="form-input form-input-num int-input" id="pIfConcluidos" placeholder="0" /></div>
         </div>
       </div>
 
@@ -236,26 +227,6 @@
           <div class="form-group"><label class="form-label">Google — Rotas</label><input type="text" inputmode="numeric" class="form-input form-input-num int-input" id="pGoogleRotas" placeholder="0" /></div>
           <div class="form-group"><label class="form-label">CRM — Investido</label><input type="text" inputmode="decimal" class="form-input form-input-num money-input" id="pCrmInvest" placeholder="0,00" /></div>
           <div class="form-group"><label class="form-label">CRM — Vendas</label><input type="text" inputmode="decimal" class="form-input form-input-num money-input" id="pCrmVendas" placeholder="0,00" /></div>
-        </div>
-      </div>
-
-      <!-- Observações -->
-      <div class="period-form-section">
-        <div class="period-form-section-title">Observações do mês</div>
-        <div class="form-group" style="margin-bottom:8px">
-          <label class="form-label">Notas brutas</label>
-          <textarea class="form-input" id="pObsRaw" rows="4" placeholder="Ex: meta ads bombou esse mês, roas 8x, cliente investiu mais 2k no meio do mês..." style="resize:vertical;font-size:13px;line-height:1.5;"></textarea>
-        </div>
-        <div style="display:flex;align-items:center;gap:10px;">
-          <button type="button" class="btn btn-sm btn-ghost" onclick="polishObs()" id="btnPolish" style="gap:6px;">
-            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 3v1m0 16v1m-8-9H3m18 0h-1m-2.636-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m11.314 11.314l.707.707M12 8a4 4 0 100 8 4 4 0 000-8z"/></svg>
-            Polir com IA
-          </button>
-          <span id="polishStatus" style="font-size:12px;color:var(--text-muted);"></span>
-        </div>
-        <div class="form-group" style="margin-top:12px;">
-          <label class="form-label">Versão polida (aparece no dashboard)</label>
-          <textarea class="form-input" id="pObsPolished" rows="4" placeholder="Clique em 'Polir com IA' ou escreva manualmente..." style="resize:vertical;font-size:13px;line-height:1.5;"></textarea>
         </div>
       </div>
     </div>
@@ -437,13 +408,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // ── FIELD MAP ──
 const FIELDS = {
-  pFatTotal: 'fat_total', pFatProprio: 'fat_proprio', pFatIfood: 'fat_ifood',
+  pFatIfood: 'fat_ifood',
+  pFatMesa: 'fat_mesa', pFatDelivery: 'fat_delivery',
+  pPedidosMesa: 'pedidos_mesa', pPedidosDelivery: 'pedidos_delivery',
   pCpVisitas: 'cp_visitas', pCpViews: 'cp_views', pCpSacola: 'cp_sacola',
   pCpRevisao: 'cp_revisao', pCpConcluidos: 'cp_concluidos',
   pIfVisitas: 'if_visitas', pIfViews: 'if_views', pIfSacola: 'if_sacola',
   pIfRevisao: 'if_revisao', pIfConcluidos: 'if_concluidos',
-  pFatMesa: 'fat_mesa', pFatDelivery: 'fat_delivery',
-  pPedidosMesa: 'pedidos_mesa', pPedidosDelivery: 'pedidos_delivery',
   pMetaInvest: 'meta_invest', pMetaVendas: 'meta_vendas',
   pGoogleInvest: 'google_invest', pGoogleVendas: 'google_vendas',
   pGoogleVisitas: 'google_visitas_loja', pGoogleRotas: 'google_rotas',
@@ -568,9 +539,6 @@ function openPeriodModal() {
   document.getElementById('periodModalTitle').textContent = 'Novo período';
   document.getElementById('pDate').value = '';
   Object.keys(FIELDS).forEach(id => { document.getElementById(id).value = ''; });
-  document.getElementById('pObsRaw').value = '';
-  document.getElementById('pObsPolished').value = '';
-  document.getElementById('polishStatus').textContent = '';
   document.getElementById('periodModal').style.display = 'flex';
 }
 
@@ -586,7 +554,7 @@ function editPeriod(id) {
   document.getElementById('pDate').value = p.period_date.substring(0, 7); // yyyy-MM
 
   // Campos monetários vs inteiros
-  var moneyFields = ['pFatTotal','pFatProprio','pFatIfood','pFatMesa','pFatDelivery','pMetaInvest','pMetaVendas','pGoogleInvest','pGoogleVendas','pCrmInvest','pCrmVendas'];
+  var moneyFields = ['pFatIfood','pFatMesa','pFatDelivery','pMetaInvest','pMetaVendas','pGoogleInvest','pGoogleVendas','pCrmInvest','pCrmVendas'];
   Object.entries(FIELDS).forEach(([inputId, dbField]) => {
     var val = p[dbField];
     if (moneyFields.indexOf(inputId) !== -1) {
@@ -596,71 +564,7 @@ function editPeriod(id) {
     }
   });
 
-  document.getElementById('pObsRaw').value = p.obs_raw || '';
-  document.getElementById('pObsPolished').value = p.obs_polished || '';
-  document.getElementById('polishStatus').textContent = '';
-
   document.getElementById('periodModal').style.display = 'flex';
-}
-
-// ── POLIR COM IA ──
-function collectMetrics() {
-  const m = {};
-  Object.entries(FIELDS).forEach(([inputId, dbField]) => {
-    const v = parseVal(document.getElementById(inputId).value);
-    if (v > 0) m[dbField] = v;
-  });
-  // Tickets médios calculados
-  if (m.fat_mesa && m.pedidos_mesa) m.ticket_mesa = +(m.fat_mesa / m.pedidos_mesa).toFixed(2);
-  if (m.fat_delivery && m.pedidos_delivery) m.ticket_delivery = +(m.fat_delivery / m.pedidos_delivery).toFixed(2);
-  if (m.fat_ifood && m.if_concluidos) m.ticket_ifood = +(m.fat_ifood / m.if_concluidos).toFixed(2);
-  // ROAS
-  if (m.meta_vendas && m.meta_invest) m.roas_meta = +(m.meta_vendas / m.meta_invest).toFixed(2);
-  if (m.google_vendas && m.google_invest) m.roas_google = +(m.google_vendas / m.google_invest).toFixed(2);
-  if (m.crm_vendas && m.crm_invest) m.roas_crm = +(m.crm_vendas / m.crm_invest).toFixed(2);
-  return m;
-}
-
-function getPreviousPeriodMetrics() {
-  if (!editingPeriodId) {
-    // Novo período: o anterior é o mais recente da lista
-    return periods.length > 0 ? periods[0] : null;
-  }
-  // Editando: achar o período anterior na lista ordenada (desc)
-  const idx = periods.findIndex(p => p.id === editingPeriodId);
-  return (idx >= 0 && idx + 1 < periods.length) ? periods[idx + 1] : null;
-}
-
-async function polishObs() {
-  const raw = document.getElementById('pObsRaw').value.trim();
-  if (!raw) return showToast('Escreva as notas brutas primeiro.', 'error');
-
-  const btn = document.getElementById('btnPolish');
-  const status = document.getElementById('polishStatus');
-  btn.disabled = true;
-  status.textContent = 'Polindo...';
-  status.style.color = 'var(--text-muted)';
-
-  const metrics = collectMetrics();
-  const prev = getPreviousPeriodMetrics();
-  const dateVal = document.getElementById('pDate').value;
-
-  try {
-    const res = await fetch('https://mynolirdauvkubxvlddt.supabase.co/functions/v1/polish-obs', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer sb_publishable_LnvMZ7skiOJ1p6CALaqDiA_0AtUfOku' },
-      body: JSON.stringify({ raw_text: raw, metrics, prev_metrics: prev, period: dateVal })
-    });
-    if (!res.ok) throw new Error('Erro na API: ' + res.status);
-    const data = await res.json();
-    document.getElementById('pObsPolished').value = data.polished || '';
-    status.textContent = 'Pronto!';
-    status.style.color = 'var(--green)';
-  } catch (e) {
-    status.textContent = 'Erro: ' + e.message;
-    status.style.color = 'var(--red)';
-  }
-  btn.disabled = false;
 }
 
 // ── SAVE ──
@@ -680,9 +584,6 @@ async function savePeriod() {
   Object.entries(FIELDS).forEach(([inputId, dbField]) => {
     payload[dbField] = parseVal(document.getElementById(inputId).value);
   });
-
-  payload.obs_raw = document.getElementById('pObsRaw').value.trim() || null;
-  payload.obs_polished = document.getElementById('pObsPolished').value.trim() || null;
 
   try {
     if (editingPeriodId) {
