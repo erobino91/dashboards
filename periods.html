@@ -168,33 +168,21 @@
         </div>
       </div>
 
-      <!-- Faturamento -->
+      <!-- Mesa & Salão -->
       <div class="period-form-section">
-        <div class="period-form-section-title">Faturamento</div>
+        <div class="period-form-section-title">Mesa & Salão</div>
         <div class="period-form-row">
-          <div class="form-group">
-            <label class="form-label">Total</label>
-            <input type="text" inputmode="decimal" class="form-input form-input-num money-input" id="pFatTotal" placeholder="0,00" />
-          </div>
-          <div class="form-group">
-            <label class="form-label">Próprio</label>
-            <input type="text" inputmode="decimal" class="form-input form-input-num money-input" id="pFatProprio" placeholder="0,00" />
-          </div>
-          <div class="form-group">
-            <label class="form-label">iFood</label>
-            <input type="text" inputmode="decimal" class="form-input form-input-num money-input" id="pFatIfood" placeholder="0,00" />
-          </div>
+          <div class="form-group"><label class="form-label">Faturamento</label><input type="text" inputmode="decimal" class="form-input form-input-num money-input" id="pFatMesa" placeholder="0,00" /></div>
+          <div class="form-group"><label class="form-label">Pedidos</label><input type="text" inputmode="numeric" class="form-input form-input-num int-input" id="pPedidosMesa" placeholder="0" /></div>
         </div>
       </div>
 
-      <!-- Mesa & Delivery Próprio -->
+      <!-- Delivery Próprio -->
       <div class="period-form-section">
-        <div class="period-form-section-title">Mesa & Delivery Próprio</div>
+        <div class="period-form-section-title">Delivery Próprio</div>
         <div class="period-form-row">
-          <div class="form-group"><label class="form-label">Fat. Mesa</label><input type="text" inputmode="decimal" class="form-input form-input-num money-input" id="pFatMesa" placeholder="0,00" /></div>
-          <div class="form-group"><label class="form-label">Pedidos Mesa</label><input type="text" inputmode="numeric" class="form-input form-input-num int-input" id="pPedidosMesa" placeholder="0" /></div>
-          <div class="form-group"><label class="form-label">Fat. Delivery</label><input type="text" inputmode="decimal" class="form-input form-input-num money-input" id="pFatDelivery" placeholder="0,00" /></div>
-          <div class="form-group"><label class="form-label">Pedidos Delivery</label><input type="text" inputmode="numeric" class="form-input form-input-num int-input" id="pPedidosDelivery" placeholder="0" /></div>
+          <div class="form-group"><label class="form-label">Faturamento</label><input type="text" inputmode="decimal" class="form-input form-input-num money-input" id="pFatDelivery" placeholder="0,00" /></div>
+          <div class="form-group"><label class="form-label">Pedidos</label><input type="text" inputmode="numeric" class="form-input form-input-num int-input" id="pPedidosDelivery" placeholder="0" /></div>
         </div>
       </div>
 
@@ -210,15 +198,18 @@
         </div>
       </div>
 
-      <!-- Funil iFood -->
+      <!-- iFood -->
       <div class="period-form-section">
-        <div class="period-form-section-title">Funil — iFood</div>
+        <div class="period-form-section-title">iFood</div>
         <div class="period-form-row">
+          <div class="form-group"><label class="form-label">Faturamento</label><input type="text" inputmode="decimal" class="form-input form-input-num money-input" id="pFatIfood" placeholder="0,00" /></div>
+        </div>
+        <div class="period-form-row" style="margin-top:12px">
           <div class="form-group"><label class="form-label">Visitas</label><input type="text" inputmode="numeric" class="form-input form-input-num int-input" id="pIfVisitas" placeholder="0" /></div>
           <div class="form-group"><label class="form-label">Visualizações</label><input type="text" inputmode="numeric" class="form-input form-input-num int-input" id="pIfViews" placeholder="0" /></div>
           <div class="form-group"><label class="form-label">Sacola</label><input type="text" inputmode="numeric" class="form-input form-input-num int-input" id="pIfSacola" placeholder="0" /></div>
           <div class="form-group"><label class="form-label">Revisão</label><input type="text" inputmode="numeric" class="form-input form-input-num int-input" id="pIfRevisao" placeholder="0" /></div>
-          <div class="form-group"><label class="form-label">Concluídos</label><input type="text" inputmode="numeric" class="form-input form-input-num int-input" id="pIfConcluidos" placeholder="0" /></div>
+          <div class="form-group"><label class="form-label">Pedidos</label><input type="text" inputmode="numeric" class="form-input form-input-num int-input" id="pIfConcluidos" placeholder="0" /></div>
         </div>
       </div>
 
@@ -417,13 +408,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // ── FIELD MAP ──
 const FIELDS = {
-  pFatTotal: 'fat_total', pFatProprio: 'fat_proprio', pFatIfood: 'fat_ifood',
+  pFatIfood: 'fat_ifood',
+  pFatMesa: 'fat_mesa', pFatDelivery: 'fat_delivery',
+  pPedidosMesa: 'pedidos_mesa', pPedidosDelivery: 'pedidos_delivery',
   pCpVisitas: 'cp_visitas', pCpViews: 'cp_views', pCpSacola: 'cp_sacola',
   pCpRevisao: 'cp_revisao', pCpConcluidos: 'cp_concluidos',
   pIfVisitas: 'if_visitas', pIfViews: 'if_views', pIfSacola: 'if_sacola',
   pIfRevisao: 'if_revisao', pIfConcluidos: 'if_concluidos',
-  pFatMesa: 'fat_mesa', pFatDelivery: 'fat_delivery',
-  pPedidosMesa: 'pedidos_mesa', pPedidosDelivery: 'pedidos_delivery',
   pMetaInvest: 'meta_invest', pMetaVendas: 'meta_vendas',
   pGoogleInvest: 'google_invest', pGoogleVendas: 'google_vendas',
   pGoogleVisitas: 'google_visitas_loja', pGoogleRotas: 'google_rotas',
@@ -563,7 +554,7 @@ function editPeriod(id) {
   document.getElementById('pDate').value = p.period_date.substring(0, 7); // yyyy-MM
 
   // Campos monetários vs inteiros
-  var moneyFields = ['pFatTotal','pFatProprio','pFatIfood','pMetaInvest','pMetaVendas','pGoogleInvest','pGoogleVendas','pCrmInvest','pCrmVendas'];
+  var moneyFields = ['pFatIfood','pFatMesa','pFatDelivery','pMetaInvest','pMetaVendas','pGoogleInvest','pGoogleVendas','pCrmInvest','pCrmVendas'];
   Object.entries(FIELDS).forEach(([inputId, dbField]) => {
     var val = p[dbField];
     if (moneyFields.indexOf(inputId) !== -1) {

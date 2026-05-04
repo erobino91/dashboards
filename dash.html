@@ -56,8 +56,8 @@
   .hero-period { font-size:13px; opacity:0.6; margin-top:6px; font-weight:500; position:relative; z-index:1; }
 
   /* Grid & Cards */
-  .fat-chart-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px; }
-  .fat-chart-main { grid-column:1/-1; min-width:0; overflow:hidden; }
+  .fat-chart-grid { display:flex; flex-direction:column; gap:10px; margin-bottom:10px; }
+  .fat-chart-main { min-width:0; overflow:hidden; }
   .fat-chart-pair { display:flex; flex-direction:column; gap:10px; min-width:0; overflow:hidden; }
   .fat-card { background:var(--bg); border-radius:var(--radius-md); padding:1.25rem 1.5rem; min-width:0; overflow:hidden; transition:transform 0.2s; }
   .fat-card:hover { transform:translateY(-1px); }
@@ -66,6 +66,7 @@
   .fat-card-val { font-family:var(--mono); font-size:24px; font-weight:500; letter-spacing:-0.02em; }
 
   .cards2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .cards3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; }
   .cards4 { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; }
 
   .mcard { background:var(--bg); border-radius:var(--radius-sm); padding:1rem 1.125rem; transition:transform 0.2s; }
@@ -122,7 +123,6 @@
 
   /* Responsive */
   @media (max-width:768px) {
-    .fat-chart-grid { grid-template-columns:1fr; }
     .fat-chart-main { grid-column:auto; }
     .fat-card-val { font-size:20px; }
     .trafego-grid { grid-template-columns:1fr; }
@@ -191,76 +191,84 @@
     </div>
   </div>
 
-  <div class="section">
+  <div class="section" data-section="faturamento">
     <div class="hero-card animate-in" style="animation-delay:0.1s">
       <div class="hero-label">Faturamento Total</div>
       <div class="hero-val" id="fat_total">—</div>
       <div id="fat_total_delta" style="font-size:12px;font-weight:600;margin-top:8px;opacity:0.85;position:relative;z-index:1;"></div>
       <div class="hero-period" id="heroPeriod">—</div>
     </div>
+    <div class="chart-box" style="margin-top:10px"><div class="chart-box-title">Evolução — Faturamento Total</div><canvas id="chartTotal" height="80"></canvas></div>
   </div>
 
-  <div class="section animate-in" style="animation-delay:0.15s">
+  <div class="section animate-in" style="animation-delay:0.15s" data-section="faturamento">
     <div class="sec-title">Detalhamento de receita</div>
     <div class="fat-chart-grid">
-      <div class="fat-chart-pair">
-        <div class="fat-card white"><div class="fat-card-label">Cardápio Próprio</div><div class="fat-card-val" id="fat_proprio">—</div><div class="mcard-delta" id="fat_proprio_delta"></div></div>
-        <div class="chart-box"><div class="chart-box-title">Evolução — Cardápio Próprio</div><canvas id="chartProprio" height="120"></canvas></div>
+      <div class="fat-chart-pair" data-section="salao">
+        <div class="subsection" style="margin-bottom:0">
+          <div class="subsection-title">Mesa & Salão</div>
+          <div class="cards3">
+            <div class="mcard"><div class="mcard-label">Faturamento</div><div class="mcard-val" id="fat_mesa">—</div><div class="mcard-delta" id="fat_mesa_delta"></div></div>
+            <div class="mcard"><div class="mcard-label">Pedidos</div><div class="mcard-val" id="pedidos_mesa">—</div><div class="mcard-delta" id="pedidos_mesa_delta"></div></div>
+            <div class="mcard"><div class="mcard-label">Ticket Médio</div><div class="mcard-val" id="ticket_mesa">—</div><div class="mcard-delta" id="ticket_mesa_delta"></div></div>
+          </div>
+          <div style="margin-top:1rem"><div class="chart-box-title">Evolução — Mesa & Salão</div><canvas id="chartMesa" height="100"></canvas></div>
+        </div>
       </div>
-      <div class="fat-chart-pair">
-        <div class="fat-card white"><div class="fat-card-label">iFood</div><div class="fat-card-val" id="fat_ifood">—</div><div class="mcard-delta" id="fat_ifood_delta"></div></div>
-        <div class="chart-box"><div class="chart-box-title">Evolução — iFood</div><canvas id="chartIfood" height="120"></canvas></div>
+      <div class="fat-chart-pair" data-section="delivery">
+        <div class="subsection" style="margin-bottom:0">
+          <div class="subsection-title">Delivery Próprio</div>
+          <div class="cards3">
+            <div class="mcard"><div class="mcard-label">Faturamento</div><div class="mcard-val" id="fat_delivery">—</div><div class="mcard-delta" id="fat_delivery_delta"></div></div>
+            <div class="mcard"><div class="mcard-label">Pedidos</div><div class="mcard-val" id="pedidos_delivery">—</div><div class="mcard-delta" id="pedidos_delivery_delta"></div></div>
+            <div class="mcard"><div class="mcard-label">Ticket Médio</div><div class="mcard-val" id="ticket_delivery">—</div><div class="mcard-delta" id="ticket_delivery_delta"></div></div>
+          </div>
+          <div style="margin-top:1rem"><div class="chart-box-title">Evolução — Delivery Próprio</div><canvas id="chartDelivery" height="100"></canvas></div>
+        </div>
       </div>
-      <div class="fat-chart-main">
-        <div class="chart-box"><div class="chart-box-title">Evolução — Faturamento Total</div><canvas id="chartTotal" height="90"></canvas></div>
+      <div class="fat-chart-pair" data-section="ifood">
+        <div class="subsection" style="margin-bottom:0">
+          <div class="subsection-title">iFood <span class="badge ifood">iFood</span></div>
+          <div class="cards3">
+            <div class="mcard"><div class="mcard-label">Faturamento</div><div class="mcard-val" id="fat_ifood">—</div><div class="mcard-delta" id="fat_ifood_delta"></div></div>
+            <div class="mcard"><div class="mcard-label">Pedidos</div><div class="mcard-val" id="pedidos_ifood">—</div><div class="mcard-delta" id="pedidos_ifood_delta"></div></div>
+            <div class="mcard"><div class="mcard-label">Ticket Médio</div><div class="mcard-val" id="ticket_if">—</div><div class="mcard-delta" id="ticket_if_delta"></div></div>
+          </div>
+          <div style="margin-top:1rem"><div class="chart-box-title">Evolução — iFood</div><canvas id="chartIfood" height="100"></canvas></div>
+        </div>
       </div>
     </div>
   </div>
 
-  <div class="section animate-in" style="animation-delay:0.18s">
-    <div class="sec-title">Pedidos — Visão Geral</div>
-    <div class="trafego-grid">
-      <div class="subsection" style="margin-bottom:0">
-        <div class="subsection-title">Mesa</div>
-        <div class="cards2">
-          <div class="mcard"><div class="mcard-label">Faturamento</div><div class="mcard-val" id="fat_mesa">—</div><div class="mcard-delta" id="fat_mesa_delta"></div></div>
-          <div class="mcard"><div class="mcard-label">Pedidos</div><div class="mcard-val" id="pedidos_mesa">—</div><div class="mcard-delta" id="pedidos_mesa_delta"></div></div>
-        </div>
-        <div class="mcard" style="margin-top:10px"><div class="mcard-label">Ticket Médio</div><div class="mcard-val" id="ticket_mesa">—</div><div class="mcard-delta" id="ticket_mesa_delta"></div></div>
-      </div>
-      <div class="subsection" style="margin-bottom:0">
-        <div class="subsection-title">Delivery Próprio</div>
-        <div class="cards2">
-          <div class="mcard"><div class="mcard-label">Faturamento</div><div class="mcard-val" id="fat_delivery">—</div><div class="mcard-delta" id="fat_delivery_delta"></div></div>
-          <div class="mcard"><div class="mcard-label">Pedidos</div><div class="mcard-val" id="pedidos_delivery">—</div><div class="mcard-delta" id="pedidos_delivery_delta"></div></div>
-        </div>
-        <div class="mcard" style="margin-top:10px"><div class="mcard-label">Ticket Médio</div><div class="mcard-val" id="ticket_delivery">—</div><div class="mcard-delta" id="ticket_delivery_delta"></div></div>
-      </div>
-    </div>
-  </div>
-
-  <div class="section animate-in" style="animation-delay:0.2s">
+  <div class="section animate-in" style="animation-delay:0.2s" data-section-group="funis">
     <div class="sec-title">Funis de conversão</div>
-    <div class="subsection">
+    <div class="subsection" data-section="funil_cp">
       <div class="subsection-title">Funil — Cardápio Próprio <span class="badge meta">Próprio</span></div>
       <div class="funnel-wrap" id="funnel_cp"></div>
     </div>
-    <div class="subsection">
+    <div class="subsection" data-section="ifood">
       <div class="subsection-title">Funil — iFood <span class="badge ifood">iFood</span></div>
       <div class="funnel-wrap" id="funnel_if"></div>
-      <div class="ticket-row"><div class="mcard" style="margin-top:10px"><div class="mcard-label">Ticket Médio — iFood</div><div class="mcard-val" id="ticket_if">—</div><div class="mcard-delta" id="ticket_if_delta"></div></div></div>
     </div>
   </div>
 
-  <div class="section animate-in" style="animation-delay:0.25s">
+  <div class="section animate-in" style="animation-delay:0.25s" data-section-group="trafego">
     <div class="sec-title">Resultados de tráfego</div>
-    <div class="trafego-grid">
-      <div class="subsection" style="margin-bottom:0"><div class="subsection-title">Meta Ads <span class="badge meta">Meta</span></div><div class="cards2"><div class="mcard"><div class="mcard-label">Valor Investido</div><div class="mcard-val" id="meta_invest">—</div><div class="mcard-delta" id="meta_invest_delta"></div></div><div class="mcard"><div class="mcard-label">Valor em Vendas</div><div class="mcard-val" id="meta_vendas">—</div><div class="mcard-delta" id="meta_vendas_delta"></div></div></div></div>
-      <div class="subsection" style="margin-bottom:0"><div class="subsection-title">CRM — Disparos <span class="badge crm">CRM</span></div><div class="cards2"><div class="mcard"><div class="mcard-label">Total Investido</div><div class="mcard-val" id="crm_invest">—</div><div class="mcard-delta" id="crm_invest_delta"></div></div><div class="mcard"><div class="mcard-label">Valor em Vendas</div><div class="mcard-val" id="crm_vendas">—</div><div class="mcard-delta" id="crm_vendas_delta"></div></div></div></div>
+    <div class="trafego-grid" id="trafegoGrid">
+      <div class="subsection" style="margin-bottom:0" data-section="meta"><div class="subsection-title">Meta Ads <span class="badge meta">Meta</span></div><div class="cards3"><div class="mcard"><div class="mcard-label">Valor Investido</div><div class="mcard-val" id="meta_invest">—</div><div class="mcard-delta" id="meta_invest_delta"></div></div><div class="mcard"><div class="mcard-label">Valor em Vendas</div><div class="mcard-val" id="meta_vendas">—</div><div class="mcard-delta" id="meta_vendas_delta"></div></div><div class="mcard"><div class="mcard-label">ROAS</div><div class="mcard-val" id="roas_meta">—</div><div class="mcard-delta" id="roas_meta_delta"></div></div></div></div>
+      <div class="subsection" style="margin-bottom:0" data-section="crm"><div class="subsection-title">CRM — Disparos <span class="badge crm">CRM</span></div><div class="cards3"><div class="mcard"><div class="mcard-label">Valor Investido</div><div class="mcard-val" id="crm_invest">—</div><div class="mcard-delta" id="crm_invest_delta"></div></div><div class="mcard"><div class="mcard-label">Valor em Vendas</div><div class="mcard-val" id="crm_vendas">—</div><div class="mcard-delta" id="crm_vendas_delta"></div></div><div class="mcard"><div class="mcard-label">ROAS</div><div class="mcard-val" id="roas_crm">—</div><div class="mcard-delta" id="roas_crm_delta"></div></div></div></div>
     </div>
-    <div class="subsection">
+    <div class="subsection" data-section="google">
       <div class="subsection-title">Google Ads <span class="badge google">Google</span></div>
-      <div class="cards4"><div class="mcard"><div class="mcard-label">Valor Investido</div><div class="mcard-val" id="google_invest">—</div><div class="mcard-delta" id="google_invest_delta"></div></div><div class="mcard"><div class="mcard-label">Valor em Vendas</div><div class="mcard-val" id="google_vendas">—</div><div class="mcard-delta" id="google_vendas_delta"></div></div><div class="mcard"><div class="mcard-label">Visitas à Loja</div><div class="mcard-val" id="local_visitas">—</div><div class="mcard-delta" id="local_visitas_delta"></div></div><div class="mcard"><div class="mcard-label">Obter Rota</div><div class="mcard-val" id="local_rota">—</div><div class="mcard-delta" id="local_rota_delta"></div></div></div>
+      <div class="cards3"><div class="mcard"><div class="mcard-label">Valor Investido</div><div class="mcard-val" id="google_invest">—</div><div class="mcard-delta" id="google_invest_delta"></div></div><div class="mcard"><div class="mcard-label">Valor em Vendas</div><div class="mcard-val" id="google_vendas">—</div><div class="mcard-delta" id="google_vendas_delta"></div></div><div class="mcard"><div class="mcard-label">ROAS</div><div class="mcard-val" id="roas_google">—</div><div class="mcard-delta" id="roas_google_delta"></div></div></div>
+      <div class="cards2" style="margin-top:10px"><div class="mcard"><div class="mcard-label">Visitas à Loja</div><div class="mcard-val" id="local_visitas">—</div><div class="mcard-delta" id="local_visitas_delta"></div></div><div class="mcard"><div class="mcard-label">Obter Rota</div><div class="mcard-val" id="local_rota">—</div><div class="mcard-delta" id="local_rota_delta"></div></div></div>
+    </div>
+  </div>
+
+  <div class="section animate-in" style="animation-delay:0.3s" id="obsSection" hidden>
+    <div class="sec-title">Destaques do mês</div>
+    <div class="subsection" style="padding:1.5rem 1.75rem;">
+      <div id="obsContent" style="font-size:14px;line-height:1.7;color:var(--text-secondary);white-space:pre-line;"></div>
     </div>
   </div>
 
@@ -272,10 +280,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
 // ── SUPABASE (public access) ──
-const _sbDash = window.supabase;
-const sb = (typeof _sbDash.createClient === 'function')
-  ? _sbDash.createClient('https://mynolirdauvkubxvlddt.supabase.co', 'sb_publishable_LnvMZ7skiOJ1p6CALaqDiA_0AtUfOku')
-  : _sbDash.supabase.createClient('https://mynolirdauvkubxvlddt.supabase.co', 'sb_publishable_LnvMZ7skiOJ1p6CALaqDiA_0AtUfOku');
+const sb = window.supabase.createClient('https://mynolirdauvkubxvlddt.supabase.co', 'sb_publishable_LnvMZ7skiOJ1p6CALaqDiA_0AtUfOku');
 
 const MESES = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 const FUNIL_LABELS = ['Visitas','Visualizações','Sacola','Revisão','Concluídos'];
@@ -285,6 +290,40 @@ const FUNIL_IF_KEYS = ['if_visitas','if_views','if_sacola','if_revisao','if_conc
 let allRows = [];
 let idxSel = 0;
 let charts = {};
+const ALL_SECTIONS = ['faturamento','salao','delivery','funil_cp','ifood','meta','google','crm'];
+let activeSections = ALL_SECTIONS;
+
+function applySections(sections) {
+  activeSections = sections || ALL_SECTIONS;
+
+  // 1) Show/hide elements with data-section
+  document.querySelectorAll('[data-section]').forEach(el => {
+    el.style.display = activeSections.includes(el.dataset.section) ? '' : 'none';
+  });
+
+  // 2) Hide section groups where ALL children are hidden
+  document.querySelectorAll('[data-section-group]').forEach(group => {
+    const children = group.querySelectorAll('[data-section]');
+    const anyVisible = Array.from(children).some(c => activeSections.includes(c.dataset.section));
+    group.style.display = anyVisible ? '' : 'none';
+  });
+
+  // 3) Adjust grids when only one child is visible
+  // Tráfego grid: meta + crm
+  const trafegoGrid = document.getElementById('trafegoGrid');
+  if (trafegoGrid) {
+    const hasMeta = activeSections.includes('meta');
+    const hasCrm = activeSections.includes('crm');
+    if (hasMeta && hasCrm) {
+      trafegoGrid.style.gridTemplateColumns = '1fr 1fr';
+    } else if (hasMeta || hasCrm) {
+      trafegoGrid.style.gridTemplateColumns = '1fr';
+    } else {
+      trafegoGrid.style.display = 'none';
+    }
+  }
+
+}
 
 function fmtBRL(n){ return 'R$ '+Number(n||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}); }
 function fmtNum(n){ return Math.round(n||0).toLocaleString('pt-BR'); }
@@ -319,6 +358,7 @@ function fmtData(d){
 
   document.title = client.name + ' — Dashboard';
 
+  applySections(client.active_sections);
   buildSelector();
   renderAll();
 
@@ -353,9 +393,10 @@ function getWindow(idx){ return allRows.slice(Math.max(0,idx-3), idx+1); }
 function renderCharts(idx){
   const win = getWindow(idx);
   const labels = win.map(r => fmtData(r.period_date));
-  const totais = win.map(r => Number(r.fat_total)||0);
-  const proprios = win.map(r => Number(r.fat_proprio)||0);
-  const ifoods = win.map(r => Number(r.fat_ifood)||0);
+  const mesas     = win.map(r => Number(r.fat_mesa)||0);
+  const deliveries= win.map(r => Number(r.fat_delivery)||0);
+  const ifoods    = win.map(r => Number(r.fat_ifood)||0);
+  const totais    = win.map(r => (Number(r.fat_mesa)||0)+(Number(r.fat_delivery)||0)+(Number(r.fat_ifood)||0));
 
   const opts = () => ({
     responsive:true, maintainAspectRatio:true,
@@ -377,9 +418,10 @@ function renderCharts(idx){
     g.addColorStop(0,color+'30'); g.addColorStop(1,color+'05');
     charts[id]=new Chart(ctx,{type:'line',data:{labels,datasets:[{data,borderColor:color,borderWidth:2.5,backgroundColor:g,fill:true,pointBackgroundColor:'#fff',pointBorderColor:color,pointBorderWidth:2}]},options:opts()});
   }
-  setChart('chartTotal',totais,'#10B981');
-  setChart('chartProprio',proprios,'#8B5CF6');
-  setChart('chartIfood',ifoods,'#EF4444');
+  setChart('chartTotal',   totais,     '#10B981');
+  setChart('chartMesa',    mesas,      '#8B5CF6');
+  setChart('chartDelivery',deliveries, '#3B82F6');
+  setChart('chartIfood',   ifoods,     '#EF4444');
 }
 
 function renderFunnel(keys, elId, corClass, curr, prev){
@@ -425,11 +467,24 @@ function renderAll(){
   const prev = idxSel>0 ? allRows[idxSel-1] : null;
   const periodo = fmtData(curr.period_date);
 
+  // Valores computados
+  const fatMesa     = Number(curr.fat_mesa)||0;
+  const fatDelivery = Number(curr.fat_delivery)||0;
+  const fatIfood    = Number(curr.fat_ifood)||0;
+  const fatProprio  = fatMesa + fatDelivery;
+  const fatTotal    = fatProprio + fatIfood;
+
+  const pFatMesa     = prev ? Number(prev.fat_mesa)||0     : 0;
+  const pFatDelivery = prev ? Number(prev.fat_delivery)||0 : 0;
+  const pFatIfood    = prev ? Number(prev.fat_ifood)||0    : 0;
+  const pFatProprio  = pFatMesa + pFatDelivery;
+  const pFatTotal    = pFatProprio + pFatIfood;
+
   document.getElementById('dashPeriodoTxt').textContent = periodo;
   document.getElementById('heroPeriod').textContent = 'Resultado de '+periodo;
-  document.getElementById('fat_total').textContent = fmtBRL(curr.fat_total);
-  document.getElementById('fat_proprio').textContent = fmtBRL(curr.fat_proprio);
-  document.getElementById('fat_ifood').textContent = fmtBRL(curr.fat_ifood);
+  document.getElementById('fat_total').textContent        = fmtBRL(fatTotal);
+  document.getElementById('fat_ifood').textContent        = fmtBRL(fatIfood);
+  document.getElementById('pedidos_ifood').textContent = fmtNum(curr.if_concluidos);
   document.getElementById('meta_invest').textContent = fmtBRL(curr.meta_invest);
   document.getElementById('meta_vendas').textContent = fmtBRL(curr.meta_vendas);
   document.getElementById('crm_invest').textContent = fmtBRL(curr.crm_invest);
@@ -439,9 +494,9 @@ function renderAll(){
   document.getElementById('local_visitas').textContent = fmtNum(curr.google_visitas_loja);
   document.getElementById('local_rota').textContent = fmtNum(curr.google_rotas);
 
-  renderDeltaHero('fat_total_delta', curr.fat_total, prev?.fat_total);
-  renderDelta('fat_proprio_delta',   curr.fat_proprio,  prev?.fat_proprio);
-  renderDelta('fat_ifood_delta',     curr.fat_ifood,    prev?.fat_ifood);
+  renderDeltaHero('fat_total_delta',       fatTotal,    pFatTotal);
+  renderDelta('fat_ifood_delta',           fatIfood,    pFatIfood);
+  renderDelta('pedidos_ifood_delta', curr.if_concluidos, prev?.if_concluidos);
   renderDelta('meta_invest_delta',   curr.meta_invest,  prev?.meta_invest);
   renderDelta('meta_vendas_delta',   curr.meta_vendas,  prev?.meta_vendas);
   renderDelta('crm_invest_delta',    curr.crm_invest,   prev?.crm_invest);
@@ -481,6 +536,30 @@ function renderAll(){
 
   document.getElementById('ticket_if').textContent = fmtBRL(tiC);
   renderDelta('ticket_if_delta',tiC,tiP);
+
+  // ROAS
+  const roasMeta   = curr.meta_invest   > 0 ? curr.meta_vendas   / curr.meta_invest   : 0;
+  const roasGoogle = curr.google_invest > 0 ? curr.google_vendas / curr.google_invest : 0;
+  const roasCrm    = curr.crm_invest    > 0 ? curr.crm_vendas    / curr.crm_invest    : 0;
+  const roasMetaP   = prev && prev.meta_invest   > 0 ? prev.meta_vendas   / prev.meta_invest   : 0;
+  const roasGoogleP = prev && prev.google_invest > 0 ? prev.google_vendas / prev.google_invest : 0;
+  const roasCrmP    = prev && prev.crm_invest    > 0 ? prev.crm_vendas    / prev.crm_invest    : 0;
+  document.getElementById('roas_meta').textContent   = roasMeta   > 0 ? roasMeta.toFixed(1).replace('.',',')   + 'x' : '—';
+  document.getElementById('roas_google').textContent = roasGoogle > 0 ? roasGoogle.toFixed(1).replace('.',',') + 'x' : '—';
+  document.getElementById('roas_crm').textContent    = roasCrm    > 0 ? roasCrm.toFixed(1).replace('.',',')    + 'x' : '—';
+  renderDelta('roas_meta_delta',   roasMeta,   roasMetaP);
+  renderDelta('roas_google_delta', roasGoogle, roasGoogleP);
+  renderDelta('roas_crm_delta',    roasCrm,    roasCrmP);
+
+  // Observações / Destaques do mês
+  const obsEl = document.getElementById('obsSection');
+  const obsText = curr.obs_polished || curr.obs_raw || '';
+  if (obsText) {
+    document.getElementById('obsContent').innerHTML = obsText.replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>');
+    obsEl.hidden = false;
+  } else {
+    obsEl.hidden = true;
+  }
 
   document.getElementById('statusMsg').textContent = 'Atualizado · '+periodo;
 }

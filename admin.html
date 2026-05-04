@@ -5,6 +5,35 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Admin — Clientes</title>
 <link rel="stylesheet" href="css/style.css" />
+<style>
+  .section-toggles {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+  .toggle-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: var(--radius-sm);
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 13px;
+  }
+  .toggle-item:hover { border-color: var(--border-md); }
+  .toggle-item:has(input:checked) { border-color: var(--purple); background: var(--purple-bg); }
+  .toggle-item input[type="checkbox"] {
+    accent-color: var(--purple);
+    width: 15px;
+    height: 15px;
+    cursor: pointer;
+  }
+  .toggle-label { color: var(--text-secondary); font-weight: 500; }
+  .toggle-item:has(input:checked) .toggle-label { color: var(--text); }
+</style>
 </head>
 <body>
 
@@ -81,6 +110,20 @@
       </select>
     </div>
 
+    <div class="form-group">
+      <label class="form-label">Seções do dashboard</label>
+      <div class="section-toggles" id="sectionToggles">
+        <label class="toggle-item"><input type="checkbox" value="faturamento" checked /><span class="toggle-label">Controle Total</span></label>
+        <label class="toggle-item"><input type="checkbox" value="salao" checked /><span class="toggle-label">Salão</span></label>
+        <label class="toggle-item"><input type="checkbox" value="delivery" checked /><span class="toggle-label">Delivery Próprio</span></label>
+        <label class="toggle-item"><input type="checkbox" value="funil_cp" checked /><span class="toggle-label">Funil Próprio</span></label>
+        <label class="toggle-item"><input type="checkbox" value="ifood" checked /><span class="toggle-label">iFood</span></label>
+        <label class="toggle-item"><input type="checkbox" value="meta" checked /><span class="toggle-label">Meta Ads</span></label>
+        <label class="toggle-item"><input type="checkbox" value="google" checked /><span class="toggle-label">Google Ads</span></label>
+        <label class="toggle-item"><input type="checkbox" value="crm" checked /><span class="toggle-label">CRM</span></label>
+      </div>
+    </div>
+
     <div class="modal-actions">
       <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
       <button class="btn btn-primary" onclick="saveClient()" id="btnSave">Salvar</button>
@@ -111,9 +154,22 @@ var SB = window.supabase.createClient(
   'sb_publishable_LnvMZ7skiOJ1p6CALaqDiA_0AtUfOku'
 );
 
+const ALL_SECTIONS = ['faturamento','salao','delivery','funil_cp','ifood','meta','google','crm'];
+
 let editingId = null;
 let deletingId = null;
 let clients = [];
+
+function getSelectedSections() {
+  return Array.from(document.querySelectorAll('#sectionToggles input:checked')).map(cb => cb.value);
+}
+
+function setSelectedSections(arr) {
+  const list = arr || ALL_SECTIONS;
+  document.querySelectorAll('#sectionToggles input').forEach(cb => {
+    cb.checked = list.includes(cb.value);
+  });
+}
 
 async function uploadLogo(file, folder) {
   const ext = file.name.split('.').pop();
@@ -223,6 +279,7 @@ function openModal() {
   document.getElementById('clientActive').value = 'true';
   document.getElementById('logoFile').value = '';
   document.getElementById('logoPreview').style.display = 'none';
+  setSelectedSections(ALL_SECTIONS);
   document.getElementById('clientModal').style.display = 'flex';
 }
 
@@ -246,6 +303,7 @@ function editClient(id) {
   } else {
     document.getElementById('logoPreview').style.display = 'none';
   }
+  setSelectedSections(c.active_sections);
   document.getElementById('clientModal').style.display = 'flex';
 }
 
@@ -279,7 +337,7 @@ async function saveClient() {
     const logoFile = document.getElementById('logoFile').files[0];
     if (logoFile) logoUrl = await uploadLogo(logoFile, 'clients');
 
-    const payload = { name, slug, is_active: isActive };
+    const payload = { name, slug, is_active: isActive, active_sections: getSelectedSections() };
     if (logoUrl) payload.logo_url = logoUrl;
 
     if (editingId) {
